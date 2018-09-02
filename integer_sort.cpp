@@ -284,6 +284,7 @@ radixSort_Positive_asc(T &arr, const int_fast64_t &low, int_fast64_t high, const
 //#########################################################################################################################################
 //#########################################################################################################################################
 // integer_radix_sort
+// all the elements from arr[low] to arr[high] are sorted, both low and high inclusive
 template<typename T>
 inline void ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &ascendingOrder = true) {
     // for loop is better than STL function fill(.....)
@@ -293,6 +294,12 @@ inline void ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, c
 
     using ArrayElementType = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>;
     const int_fast64_t sortArrayLength = high - low + 1;
+
+    if (sortArrayLength < MERGE_SORT_THRESHOLD) {
+        if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
+        else merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+        return;
+    }
 
     // "arrMaxElement" is used to store the largest element in "arr"
     // "arrMinElement" is used to store the smallest element in "arr"
