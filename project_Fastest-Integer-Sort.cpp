@@ -1,8 +1,13 @@
 #include <iostream>
+#include <cstdint>
 
 #include <iomanip>
 #include <algorithm>
 #include <chrono>
+#include <cstring>
+#include <array>
+
+#include <type_traits>
 
 #include "integer_sort.cpp"
 
@@ -20,18 +25,27 @@ using namespace std::chrono;
 #define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int columnWidth = 15;
 
-const int64_t __mySize__ = 100000000;   //10_00_00000
+// const int64_t __mySize__ = 100000000;   //10_00_00000
+const int64_t __mySize__ = 10000000;    //1_00_00000
+// const int64_t __mySize__ = 1000000;     //  10_00000
+// const int64_t __mySize__ = 100000;      //   1_00000
+// const int64_t __mySize__ = 10000;       //    10_000
+// const int64_t __mySize__ = 1000;        //     1_000
+// const int64_t __mySize__ = 100;         //       100
 
-// const bool global_onlyPositiveNumbers = true;        // +ve numbers
-const bool global_onlyPositiveNumbers = false;          // +ve and -ve numbers
+// const int global_onlyPositiveNumbers = 1;      // +ve numbers
+const int global_onlyPositiveNumbers = 0;      // +ve and -ve numbers
+// const int global_onlyPositiveNumbers = -1;     // -ve numbers
 
+// using ArrayDataType = int8_t;
+// using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
-
 using ArrayDataType = int64_t;
 
-
 //#########################################################################################################################################
+//-----------------------------------------------------------------------------------------------------------------------------------------
 //#########################################################################################################################################
+//-----------------------------------------------------------------------------------------------------------------------------------------
 //#########################################################################################################################################
 template<typename T>
 int64_t maxIndex(const T arr[], const int64_t &size) {
@@ -73,31 +87,57 @@ bool isSortedAscending(const T arr, const int64_t &low, const int64_t &high, MyG
     return true;
 }
 
+template<typename T>
+bool compareArray(const T &arr1, const T &arr2, const int64_t &low, const int64_t &high) {
+    for (int64_t i = low; i <= high; i++) {
+        if (arr1[i] != arr2[i]) {
+            cout << "arrays not equal" << endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 //#########################################################################################################################################
 //#########################################################################################################################################
 //#########################################################################################################################################
 template<typename T>
-void objFillRandArray(T &arr, const int64_t &low, const int64_t &high, const bool &onlyPositive = true) {
+void objFillRandArray(T &arr, const int64_t &low, const int64_t &high, const int &onlyPositive) {
     int64_t i = low, temp1, temp2;
-    if (onlyPositive) {
-        // only +ve random numbers
+    if (onlyPositive == 1) {
         for (; i <= high; i++) {
             // arr[i] = (rand() % 2);                  // 2 ^ 1
             // arr[i] = (rand() % 251);                // 2 ^ 8
             // arr[i] = (rand() % 1023);               // 2 ^ 10
             // arr[i] = (rand() % 16381);              // 2 ^ 14
-            // arr[i] = (rand() % 65521);              // 2 ^ 16
+            arr[i] = (rand() % 65521);              // 2 ^ 16
             // arr[i] = (rand() % 16777213);           // 2 ^ 24
             // arr[i] = (rand() % 2147483647);         // 2 ^ 32
 
-            temp1 = (9223372036854775807 - (rand() % 2147483647));
+            // temp1 = (9223372036854775807 - (rand() % 2147483647));
             // arr[i] = (temp1 % 1099511627773);        // 2 ^ 40
             // arr[i] = (temp1 % 281474976710653);      // 2 ^ 48
             // arr[i] = (temp1 % 72057594037927931);    // 2 ^ 56
-            arr[i] = temp1;                          // 2 ^ 64
+            // arr[i] = temp1;                          // 2 ^ 64
+        }
+    } else if (onlyPositive == -1) {
+        for (; i <= high; i++) {
+            // arr[i] = -(rand() % 2);                  // 2 ^ 1
+            arr[i] = -(rand() % 251);                // 2 ^ 8
+            // arr[i] = -(rand() % 1023);               // 2 ^ 10
+            // arr[i] = -(rand() % 16381);              // 2 ^ 14
+            // arr[i] = -(rand() % 65521);              // 2 ^ 16
+            // arr[i] = -(rand() % 16777213);           // 2 ^ 24
+            // arr[i] = -(rand() % 2147483647);         // 2 ^ 32
+
+            // temp1 = (9223372036854775807 - (rand() % 2147483647));
+            // arr[i] = -(temp1 % 1099511627773);        // 2 ^ 40
+            // arr[i] = -(temp1 % 281474976710653);      // 2 ^ 48
+            // arr[i] = -(temp1 % 72057594037927931);    // 2 ^ 56
+            // arr[i] = -temp1;                          // 2 ^ 64
         }
     } else {
-        // +ve and -ve random numbers
         for (; i <= high; i++) {
             // arr[i] = ((rand() % 2) - (rand() % 2));                     // 2 ^ 1
             // arr[i] = ((rand() % 251) - (rand() % 251));                 // 2 ^ 8
@@ -105,14 +145,14 @@ void objFillRandArray(T &arr, const int64_t &low, const int64_t &high, const boo
             // arr[i] = ((rand() % 16381) - (rand() % 16381));             // 2 ^ 14
             // arr[i] = ((rand() % 65521) - (rand() % 65521));             // 2 ^ 16
             // arr[i] = ((rand() % 16777213) - (rand() % 16777213));       // 2 ^ 24
-            // arr[i] = ((rand() % 2147483647) - (rand() % 2147483647));   // 2 ^ 32
+            arr[i] = ((rand() % 2147483647) - (rand() % 2147483647));   // 2 ^ 32
 
-            temp1 = (9223372036854775807 - (rand() % 2147483647));
-            temp2 = (9223372036854775807 - (rand() % 2147483647));
+            // temp1 = (9223372036854775807 - (rand() % 2147483647));
+            // temp2 = (9223372036854775807 - (rand() % 2147483647));
             // arr[i] = ((temp1 % 1099511627773) - (temp1 % 1099511627773));           // 2 ^ 40
             // arr[i] = ((temp1 % 281474976710653) - (temp1 % 281474976710653));       // 2 ^ 48
             // arr[i] = ((temp1 % 72057594037927931) - (temp1 % 72057594037927931));   // 2 ^ 56
-            arr[i] = temp1 - temp2;                          // 2 ^ 64
+            // arr[i] = temp1 - temp2;                          // 2 ^ 64
         }
     }
 
@@ -122,29 +162,36 @@ void objFillRandArray(T &arr, const int64_t &low, const int64_t &high, const boo
 #define startTime copy(&baseArray[0], &baseArray[0] + arrayLength, &arr[0]); start = high_resolution_clock::now();
 #define endTime stop = high_resolution_clock::now(); duration = duration_cast<nanoseconds>(stop - start);
 #define checkSortingRange_asc(_arr, _low, _high) if (!(isSortedAscending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in ascending order\n"; dbArrLimit(_arr, _low, _high);}
+#define checkSortingRange_desc(_arr, _low, _high) if (!(isSortedDescending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in descending order\n"; dbArrLimit(_arr, _low, _high);}
 
 //#########################################################################################################################################
 //#########################################################################################################################################
 //#########################################################################################################################################
 int main() {
+    int setwLen = 11, setwLenRatio = 11;
+    long double irSortRatio = 0, stdSortRatio = 0;
+    cout << setprecision(3);
+
     auto start = high_resolution_clock::now();      // Get starting time
     auto stop = start;      // Get ending time
     nanoseconds duration;   // Get duration. Subtract start time point to get duration. To cast it to proper unit use duration cast method
 
     int64_t minArrayLength = 0, minMaxArrayLengthDiff = 0, testCases = 0;
-
     cout << "Input: (minArrayLength, minMaxDiff, testCases;) = ";
     cin >> minArrayLength >> minMaxArrayLengthDiff >> testCases;
     cout << endl;
     int64_t maxArrayLength = minArrayLength + minMaxArrayLengthDiff;
 
-    static ArrayDataType *arr = new ArrayDataType[__mySize__];            // used to store the random array generated
-    static ArrayDataType *baseArray = new ArrayDataType[__mySize__];      // used to check sorting time, it will the values from the baseArray
+    // ARRAY
+    static ArrayDataType arr[__mySize__];            // used to check sorting time, it will the values from the baseArray
+    static ArrayDataType baseArray[__mySize__];      // used to store the random array generated
 
     rangeup(arrayLength, minArrayLength, maxArrayLength + 1) {
         cout << "#####################################################################";
         db1(arrayLength)
         db1(testCases)
+
+        irSortRatio = 0, stdSortRatio = 0;
 
         int64_t timeArrLength = {2};
         int64_t timeArr[timeArrLength];             // used to store the time taken for a particular sorting technique
@@ -152,28 +199,39 @@ int main() {
         fill_n(timeArr, timeArrLength, 0);
         fill_n(bestThreshold, timeArrLength, 0);
 
-        cout << "\n\nTime taken in nano-seconds:";
-        cout << "\nir_sort\t,std::sort";
+        cout << "\n\nTime taken in nano-seconds, Time ratio with respect to ir_sort";
+        cout << endl << left << setw(setwLen) << "ir_sort" << "\t," << setw(setwLen) << "std::sort" << "\t,"
+             << setw(setwLenRatio) << "ratio ir_sort" << "\t," << setw(setwLenRatio) << "ratio std::sort";
+
         rangeup(__, 0, testCases) {
             int64_t myTempLow = 0, myTempHigh = arrayLength - 1;
 
             // Fill up the array
             objFillRandArray(baseArray, 0, arrayLength - 1, global_onlyPositiveNumbers);
-            int64_t timeArrIndex = 0;       // index to insert data in timeArr
+            // index to insert data in timeArr
+            int64_t timeArrIndex = 0;
 
             startTime
-            ir_sort(arr, myTempLow, myTempHigh, true);
+            ir_sort(arr, myTempLow, myTempHigh, true);      // ascending order
+            // ir_sort(arr, myTempLow, myTempHigh, false);     // descending order
             endTime
             timeArr[timeArrIndex++] = duration.count();
-            checkSortingRange_asc(arr, myTempLow, myTempHigh)
+            checkSortingRange_asc(arr, myTempLow, myTempHigh)       // check ascending order sorting
+            // checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
 
             startTime
-            sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1);
+            sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1);    // ascending order
+            // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](ArrayDataType &a, ArrayDataType &b) { return a > b; });   // descending order
             endTime
             timeArr[timeArrIndex++] = duration.count();
-            checkSortingRange_asc(arr, myTempLow, myTempHigh)
+            checkSortingRange_asc(arr, myTempLow, myTempHigh)       // check ascending order sorting
+            // checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
 
-            cout << endl << timeArr[0] << "\t," << timeArr[1];
+            cout << endl << left << setw(setwLen) << timeArr[0] << "\t," << setw(setwLen) << timeArr[1] << "\t,"
+                 << setw(setwLenRatio) << timeArr[0] / timeArr[0] << "\t,"
+                 << setw(setwLenRatio) << ((1.0 * timeArr[1]) / timeArr[0]);
+            irSortRatio += (timeArr[0] / timeArr[0]);
+            stdSortRatio += (((1.0 * timeArr[1]) / timeArr[0]));
 
             //#################################################
             bestThreshold[minIndex(timeArr, timeArrLength)]++;
@@ -188,12 +246,12 @@ int main() {
         else cout << "\n\nstd::sort is faster than ir_sort ";
         cout << (bestThreshold[maxSpeedIndex] * 100.0 / testCases) << " % times, for testCases = " << testCases;
 
+        cout << "\n\nir_sort speed ratio average = " << irSortRatio / testCases;
+        cout << "\nstd::sort speed ratio average = " << stdSortRatio / testCases;
+
         cout << endl << endl;
     }
 
-    delete[] arr;
-    delete[] baseArray;
-    cout << endl;
     return 0;
 }
 

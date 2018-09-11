@@ -4,7 +4,7 @@ These are generalised functions written in C++ which are highly optimised for th
 Details
 ----------------------------------
 1. "ir_sort" is the name of the function to sort the integer based arrays.
-2. Four parameters: array, startIndex(integer), endIndex(integer), ascendingOrder(boolean)(optional)
+2. Four parameters: array, startIndex(integer), endIndex(integer), ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
 3. Currently sorts the input in ascending order only.
 
 Features
@@ -24,7 +24,10 @@ Time complexity
 
 Graph
 ----------------------------------
-![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph.png)
+![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int64.png)
+![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int32.png)
+![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int16.png)
+![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int8_OR_char.png)
 
 Usage
 ----------------------------------
@@ -36,5 +39,4 @@ include "integer_sort.cpp"
 ```
 TODO
 ----------------------------------
-1. add option to sort the array in descending order
-2. write the function to sort the array of objects based on integers in ascending and descending order
+1. write the function to sort the array of objects based on integer key in ascending and descending order

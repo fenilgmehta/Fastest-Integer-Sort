@@ -159,7 +159,8 @@ template<typename ArrayElementType, typename T>
 inline void merge_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &ascendingOrder) {
     // using ArrayElementType = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>;
 
-    INSERTION_SORT_THRESHOLD = THRESHOLD_INSERTION_FOR_MERGE[high - low + 1];
+    if ((high - low + 1 < 1361)) INSERTION_SORT_THRESHOLD = THRESHOLD_INSERTION_FOR_MERGE[high - low + 1];
+
     if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
     else merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
 }
