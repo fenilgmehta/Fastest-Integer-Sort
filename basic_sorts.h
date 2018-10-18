@@ -154,7 +154,7 @@ inline void merge_sort_basic_desc(T &arr, const int_fast64_t &low, const int_fas
 }
 
 //#################################################
-// MERGE SORT
+// MERGE SORT and INSERTION SORT hybrid
 template<typename ArrayElementType, typename T>
 inline void merge_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &ascendingOrder) {
     // using ArrayElementType = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>;
@@ -164,6 +164,71 @@ inline void merge_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high
     if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
     else merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
 }
+
+
+// Quick sort
+/*template<typename T, typename ArrayElement, typename myComparator>
+inline void quick_sort(T &arr, const int64_t &low, const int64_t &high, myComparator Comp) {
+    if (low >= high) return;
+
+    if ((high - low) < INSERTION_SORT_THRESHOLD) {
+        insertion_sort<T, ArrayElement, myComparator>(arr, low, high, Comp);
+        return;
+    }
+
+    ArrayElement mid = (low + high) >> 1;
+    if (Comp(arr[low], arr[mid])) std::swap(arr[mid], arr[low]);
+    if (Comp(arr[high], arr[mid])) std::swap(arr[mid], arr[high]);
+    if (Comp(arr[high], arr[low])) std::swap(arr[low], arr[high]);
+    ArrayElement pivot = arr[low];    // pivot
+
+    int64_t i = low;
+    int64_t j = high + 1;
+
+    while (i < j) {
+
+        // find item on lo to swap
+        // while (arr[++i] < pivot) {
+        while (Comp(arr[++i], pivot)) {
+            if (i == high) break;
+        }
+
+        // find item on hi to swap
+        // while (pivot < arr[--j]) {
+        while (Comp(pivot, arr[--j])) {
+            // the following condition is - redundant since arr[low] acts as sentinel
+            // if (j == low) break;
+        }
+
+        // check if pointers cross
+        if (i < j) std::swap(arr[i], arr[j]);
+    }
+
+    // put partitioning item pivot at arr[j]
+    std::swap(arr[low], arr[j]);
+
+    if ((j - 1 - low) < INSERTION_SORT_THRESHOLD) insertion_sort<T, ArrayElement, myComparator>(arr, low, j - 1, Comp);
+    else quick_sort<T, ArrayElement, myComparator>(arr, low, j - 1, Comp);
+
+    if ((high - j - 1) < INSERTION_SORT_THRESHOLD) insertion_sort<T, ArrayElement, myComparator>(arr, j + 1, high, Comp);
+    else quick_sort<T, ArrayElement, myComparator>(arr, j + 1, high, Comp);
+}
+
+template<typename T>
+inline void quick_sort(T &arr, const int64_t &low, const int64_t &high, bool ascendingOrder) {
+    using ArrayElement = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>;
+
+    if (ascendingOrder) quick_sort<T, ArrayElement>(arr, low, high, [](ArrayElement &a, ArrayElement &b) { return a < b; });
+    else quick_sort<T, ArrayElement>(arr, low, high, [](ArrayElement &a, ArrayElement &b) { return a > b; });
+}
+
+template<typename T, typename myGetIndex>
+inline void quick_sort(T &arr, const int64_t &low, const int64_t &high, bool ascendingOrder, myGetIndex getIndex) {
+    using ArrayElement = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>;
+
+    if (ascendingOrder) quick_sort<T, ArrayElement>(arr, low, high, [getIndex](ArrayElement &a, ArrayElement &b) { return getIndex(a) < getIndex(b); });
+    else quick_sort<T, ArrayElement>(arr, low, high, [getIndex](ArrayElement &a, ArrayElement &b) { return getIndex(a) > getIndex(b); });
+}*/
 
 //#########################################################################################################################################
 //-----------------------------------------------------------------------------------------------------------------------------------------

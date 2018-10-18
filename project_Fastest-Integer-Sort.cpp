@@ -25,14 +25,6 @@ using namespace std::chrono;
 #define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int columnWidth = 15;
 
-// const int64_t __mySize__ = 100000000;   //10_00_00000
-const int64_t __mySize__ = 10000000;    //1_00_00000
-// const int64_t __mySize__ = 1000000;     //  10_00000
-// const int64_t __mySize__ = 100000;      //   1_00000
-// const int64_t __mySize__ = 10000;       //    10_000
-// const int64_t __mySize__ = 1000;        //     1_000
-// const int64_t __mySize__ = 100;         //       100
-
 // const int global_onlyPositiveNumbers = 1;      // +ve numbers
 const int global_onlyPositiveNumbers = 0;      // +ve and -ve numbers
 // const int global_onlyPositiveNumbers = -1;     // -ve numbers
@@ -104,58 +96,57 @@ bool compareArray(const T &arr1, const T &arr2, const int64_t &low, const int64_
 //#########################################################################################################################################
 template<typename T>
 void objFillRandArray(T &arr, const int64_t &low, const int64_t &high, const int &onlyPositive) {
-    int64_t i = low, temp1, temp2;
+    uint64_t i = low, temp1, temp2;
     if (onlyPositive == 1) {
         for (; i <= high; i++) {
             // arr[i] = (rand() % 2);                  // 2 ^ 1
-            // arr[i] = (rand() % 251);                // 2 ^ 8
+            // arr[i] = (rand() % 125);                // 2 ^ 8
             // arr[i] = (rand() % 1023);               // 2 ^ 10
             // arr[i] = (rand() % 16381);              // 2 ^ 14
-            arr[i] = (rand() % 65521);              // 2 ^ 16
+            // arr[i] = (rand() % 32767);              // 2 ^ 16
             // arr[i] = (rand() % 16777213);           // 2 ^ 24
-            // arr[i] = (rand() % 2147483647);         // 2 ^ 32
+            // arr[i] = (rand() % 1073741823);         // 2 ^ 32
 
-            // temp1 = (9223372036854775807 - (rand() % 2147483647));
+            temp1 = (9223372036854675807 - (rand() % 2147483647));
             // arr[i] = (temp1 % 1099511627773);        // 2 ^ 40
             // arr[i] = (temp1 % 281474976710653);      // 2 ^ 48
             // arr[i] = (temp1 % 72057594037927931);    // 2 ^ 56
-            // arr[i] = temp1;                          // 2 ^ 64
+            arr[i] = temp1;                          // 2 ^ 64
         }
     } else if (onlyPositive == -1) {
         for (; i <= high; i++) {
-            // arr[i] = -(rand() % 2);                  // 2 ^ 1
-            arr[i] = -(rand() % 251);                // 2 ^ 8
-            // arr[i] = -(rand() % 1023);               // 2 ^ 10
-            // arr[i] = -(rand() % 16381);              // 2 ^ 14
-            // arr[i] = -(rand() % 65521);              // 2 ^ 16
-            // arr[i] = -(rand() % 16777213);           // 2 ^ 24
-            // arr[i] = -(rand() % 2147483647);         // 2 ^ 32
+            // arr[i] = (rand() % 2);                  // 2 ^ 1
+            // arr[i] = (rand() % 125);                // 2 ^ 8
+            // arr[i] = (rand() % 1023);               // 2 ^ 10
+            // arr[i] = (rand() % 16381);              // 2 ^ 14
+            // arr[i] = (rand() % 32767);              // 2 ^ 16
+            // arr[i] = (rand() % 16777213);           // 2 ^ 24
+            // arr[i] = (rand() % 1073741823);         // 2 ^ 32
 
-            // temp1 = (9223372036854775807 - (rand() % 2147483647));
-            // arr[i] = -(temp1 % 1099511627773);        // 2 ^ 40
-            // arr[i] = -(temp1 % 281474976710653);      // 2 ^ 48
-            // arr[i] = -(temp1 % 72057594037927931);    // 2 ^ 56
-            // arr[i] = -temp1;                          // 2 ^ 64
+            temp1 = (9223372036854675807 - (rand() % 2147483647));
+            // arr[i] = (temp1 % 1099511627773);        // 2 ^ 40
+            // arr[i] = (temp1 % 281474976710653);      // 2 ^ 48
+            // arr[i] = (temp1 % 72057594037927931);    // 2 ^ 56
+            arr[i] = temp1;                          // 2 ^ 64
         }
     } else {
         for (; i <= high; i++) {
             // arr[i] = ((rand() % 2) - (rand() % 2));                     // 2 ^ 1
-            // arr[i] = ((rand() % 251) - (rand() % 251));                 // 2 ^ 8
+            // arr[i] = ((rand() % 125) - (rand() % 125));                 // 2 ^ 8
             // arr[i] = ((rand() % 1023) - (rand() % 1023));               // 2 ^ 10
             // arr[i] = ((rand() % 16381) - (rand() % 16381));             // 2 ^ 14
-            // arr[i] = ((rand() % 65521) - (rand() % 65521));             // 2 ^ 16
+            // arr[i] = ((rand() % 32767) - (rand() % 32767));             // 2 ^ 16
             // arr[i] = ((rand() % 16777213) - (rand() % 16777213));       // 2 ^ 24
-            arr[i] = ((rand() % 2147483647) - (rand() % 2147483647));   // 2 ^ 32
+            // arr[i] = ((rand() % 1073741823) - (rand() % 1073741823));   // 2 ^ 32
 
-            // temp1 = (9223372036854775807 - (rand() % 2147483647));
-            // temp2 = (9223372036854775807 - (rand() % 2147483647));
+            temp1 = (9223372036854675807 - (rand() % 2147483647));
+            temp2 = (9223372036854675807 - (rand() % 2147483647));
             // arr[i] = ((temp1 % 1099511627773) - (temp1 % 1099511627773));           // 2 ^ 40
             // arr[i] = ((temp1 % 281474976710653) - (temp1 % 281474976710653));       // 2 ^ 48
             // arr[i] = ((temp1 % 72057594037927931) - (temp1 % 72057594037927931));   // 2 ^ 56
-            // arr[i] = temp1 - temp2;                          // 2 ^ 64
+            arr[i] = temp1 - temp2;                                                 // 2 ^ 64
         }
     }
-
 }
 
 //#########################################################################################################################################
@@ -183,8 +174,8 @@ int main() {
     int64_t maxArrayLength = minArrayLength + minMaxArrayLengthDiff;
 
     // ARRAY
-    static ArrayDataType arr[__mySize__];            // used to check sorting time, it will the values from the baseArray
-    static ArrayDataType baseArray[__mySize__];      // used to store the random array generated
+    vector<ArrayDataType> arr(minArrayLength+minMaxArrayLengthDiff);            // used to check sorting time, it will the values from the baseArray
+    vector<ArrayDataType> baseArray(minArrayLength+minMaxArrayLengthDiff);      // used to store the random array generated
 
     rangeup(arrayLength, minArrayLength, maxArrayLength + 1) {
         cout << "#####################################################################";
@@ -212,7 +203,9 @@ int main() {
             int64_t timeArrIndex = 0;
 
             startTime
-            ir_sort(arr, myTempLow, myTempHigh, true);      // ascending order
+            ir_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, true);      // first two parameters same as std::sort, ascending order
+            // ir_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);     // first two parameters same as std::sort, descending order
+            // ir_sort(arr, myTempLow, myTempHigh, true);      // ascending order
             // ir_sort(arr, myTempLow, myTempHigh, false);     // descending order
             endTime
             timeArr[timeArrIndex++] = duration.count();

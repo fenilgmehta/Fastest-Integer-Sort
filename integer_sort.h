@@ -5,16 +5,9 @@
 #include <algorithm>
 #include <type_traits>
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-
-//#########################################################################################################################################
-//#########################################################################################################################################
-//#########################################################################################################################################
-//int INSERTION_SORT_THRESHOLD = 25;
-//int MERGE_SORT_THRESHOLD = 135;
-int64_t INSERTION_SORT_THRESHOLD = 30;
-int64_t MERGE_SORT_THRESHOLD = 29;
+//*****************************************************************************************************************************************
+int64_t INSERTION_SORT_THRESHOLD = 30; // 25
+int64_t MERGE_SORT_THRESHOLD = 29;     // 135
 
 // 0 to 1360
 const int64_t THRESHOLD_INSERTION_FOR_MERGE[] = {0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 9, 10, 10, 12, 11, 14, 15, 13, 13, 16, 14, 15, 15, 19, 21, 19, 20, 25, 21, 22,
@@ -84,7 +77,7 @@ inline int_fast16_t countBits_positive(T num) {
 
 template<typename T>
 inline int_fast16_t countBits_negative(const T &num) {
-    uint_fast64_t number = static_cast<uint_fast64_t>(-num);
+    auto number = static_cast<uint_fast64_t>(-num);
     int_fast16_t result = 0;
 
     while (number > 0) {
@@ -156,6 +149,17 @@ inline void set_BitShift_Iterations(const int_fast16_t &arrMax_bits, int_fast16_
     }
 }
 
+//#########################################################################################################################################
+//#########################################################################################################################################
+//#########################################################################################################################################
+// template<typename T>
+// inline void
+// ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &ascendingOrder = true, int_fast16_t forceLinearSort = 0);
+//
+// template<typename RandomAccessIterator>
+// inline void
+// ir_sort(RandomAccessIterator start, RandomAccessIterator end, const bool &ascendingOrder, int_fast16_t forceLinearSort);
+
+//*****************************************************************************************************************************************
 #endif //PROJECT_SORTING_MYSORT_H
 
-#pragma clang diagnostic pop
