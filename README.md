@@ -5,9 +5,9 @@ These are generalised functions written in C++ which are highly optimised for th
 Details
 ----------------------------------
 1. "ir_sort" is the name of the function to sort the integer based arrays.
-2. Five parameters: array, startIndex(integer), endIndex(integer), ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
-3. Alternative parameters: first two parameters same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
-4. Sorts the input in ascending order and descending order.
+2. Five parameters: first two parameters same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
+   Alternative five parameters: array, startIndex(integer), endIndex(integer), ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
+3. Sorts the input in ascending order and descending order.
 
 
 Features
@@ -51,10 +51,11 @@ For competitions:
 ```
 // copy the namespace "integer_sort" from "ir_sort_competitions.cpp" to the main ".cpp" program file
 
-// to call the function, from the namespace "integer_sort_asc"
+// to call the function, from the namespace "integer_sort"
 // the parameters are same as std::sort
-// eg: integer_sort_asc::ir_sort(v.begin(), v.end()); where "v" is a vector of integers
-integer_sort_asc::ir_sort(begin, end)
+// eg: integer_sort::ir_sort(v.begin(), v.end()); where "v" is a vector of integers, result is in ascending order
+// eg: integer_sort::ir_sort(v.rbegin(), v.rend()); where "v" is a vector of integers, result is in descending order
+integer_sort::ir_sort(begin, end)
 ```
 
 

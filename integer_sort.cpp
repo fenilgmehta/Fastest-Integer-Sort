@@ -454,9 +454,9 @@ radixSort_desc(T &arr, const int_fast64_t &low, int_fast64_t high,
 // integer_radix_sort
 // all the elements from arr[low] to arr[high] are sorted, both low and high inclusive
 // template<typename ArrayElementType, typename T>
-template<typename T>
+template<typename RandomAccessIterator>
 inline void
-ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &ascendingOrder = true, int_fast16_t forceLinearSort = 0) {
+ir_sort(RandomAccessIterator &arr, const int_fast64_t &low, const int_fast64_t &high, bool &ascendingOrder, int_fast16_t &forceLinearSort) {
     /* ### PARAMETERS
      * arr: the array to be sorted(values from [low, high] will be sorted)
      * low: the lower index for sorting
@@ -473,7 +473,15 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
     if (low >= high) return;
 
     using ArrayElementType = std::remove_reference_t<std::remove_const_t<decltype(arr[0])>>; // this should be used if the template parameter is only "T"
+    using T=ArrayElementType *;
     // using ArrayElementType = typename std::remove_all_extents<decltype(arr)>::type;       // has NOT been tested
+
+    ArrayElementType *p_arr = &arr[0];
+    if ((&arr[1]) != ((&arr[0]) + 1)) {
+        // the given parameter "arr" is a reverse iterator
+        p_arr = &arr[high];
+        ascendingOrder = (!ascendingOrder);
+    }
 
     const int_fast64_t sortArrayLength = high - low + 1;
 
@@ -486,13 +494,13 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
         MERGE_SORT_THRESHOLD = 0;
     } else if (forceLinearSort == -1) {
         // FORCE merge_sort
-        if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
-        else merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+        if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(p_arr, low, high);
+        else merge_sort_basic_desc<ArrayElementType, T>(p_arr, low, high);
         return;
     } else if (forceLinearSort == -2) {
         // FORCE insertion_sort
-        if (ascendingOrder) insertion_sort_basic_asc<ArrayElementType, T>(arr, low, high);
-        else insertion_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+        if (ascendingOrder) insertion_sort_basic_asc<ArrayElementType, T>(p_arr, low, high);
+        else insertion_sort_basic_desc<ArrayElementType, T>(p_arr, low, high);
         return;
     } else {
         // dynamically choose the sort
@@ -509,8 +517,8 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
     // ==========================================================
     // merge_sort
     if (sortArrayLength < MERGE_SORT_THRESHOLD) {
-        if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
-        else merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+        if (ascendingOrder) merge_sort_basic_asc<ArrayElementType, T>(p_arr, low, high);
+        else merge_sort_basic_desc<ArrayElementType, T>(p_arr, low, high);
         return;
     }
 
@@ -518,19 +526,19 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
     // ==========================================================
     // arrMaxElement: largest element in "arr"
     // arrMinElement: smallest element in "arr"
-    ArrayElementType arrMaxElement = arr[high], arrMinElement = arr[high];
+    ArrayElementType arrMaxElement = p_arr[high], arrMinElement = p_arr[high];
 
     // this for loop is used to FIND THE MAXIMUM and MINIMUM of all the elements in the given array/RandomAccessIterator
     for (int_fast64_t i = low; i < high; i++) {
-        if (arr[i] > arrMaxElement) arrMaxElement = arr[i];
-        else if (arr[i] < arrMinElement) arrMinElement = arr[i];
+        if (p_arr[i] > arrMaxElement) arrMaxElement = p_arr[i];
+        else if (p_arr[i] < arrMinElement) arrMinElement = p_arr[i];
     }
 
 
     // counting sort
     if ((1.0 * sortArrayLength) / (arrMaxElement - arrMinElement) > 0.71 || forceLinearSort == 2) {
-        if (ascendingOrder) countingSort_asc<ArrayElementType>(arr, low, high, arrMaxElement, arrMinElement);
-        else countingSort_desc<ArrayElementType>(arr, low, high, arrMaxElement, arrMinElement);
+        if (ascendingOrder) countingSort_asc<ArrayElementType>(p_arr, low, high, arrMaxElement, arrMinElement);
+        else countingSort_desc<ArrayElementType>(p_arr, low, high, arrMaxElement, arrMinElement);
         return;
     }
 
@@ -551,7 +559,7 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
     } else if (bits_arrMinElement > bits_arrMaxElement) bits_arrMaxElement = bits_arrMinElement;
 
 
-    if (forceLinearSort == 0) {
+    if (forceLinearSort == 0 && sortArrayLength < 408) {
         if (onlyPositiveNumbers != 0) {
             // +ve and -ve numbers
             if (bits_arrMaxElement <= 8) MERGE_SORT_THRESHOLD = 49;
@@ -583,18 +591,18 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
             // +ve and -ve number to be sorted
             if (ascendingOrder) {
                 if (sortArrayLength <= MERGE_SORT_THRESHOLD) {
-                    merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
+                    merge_sort_basic_asc<ArrayElementType, T>(p_arr, low, high);
                     return;
                 } else {
-                    radixSort_asc<ArrayElementType, T>(arr, low, high, sortArrayLength, bits_arrMaxElement);
+                    radixSort_asc<ArrayElementType, T>(p_arr, low, high, sortArrayLength, bits_arrMaxElement);
                     return;
                 }
             } else {
                 if (sortArrayLength <= MERGE_SORT_THRESHOLD) {
-                    merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+                    merge_sort_basic_desc<ArrayElementType, T>(p_arr, low, high);
                     return;
                 } else {
-                    radixSort_desc<ArrayElementType, T>(arr, low, high, sortArrayLength, bits_arrMaxElement);
+                    radixSort_desc<ArrayElementType, T>(p_arr, low, high, sortArrayLength, bits_arrMaxElement);
                     return;
                 }
             }
@@ -603,18 +611,18 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
             // -ve numbers ONLY
             if (ascendingOrder) {
                 if (sortArrayLength <= MERGE_SORT_THRESHOLD) {
-                    merge_sort_basic_asc<ArrayElementType, T>(arr, low, high);
+                    merge_sort_basic_asc<ArrayElementType, T>(p_arr, low, high);
                     return;
                 } else {
-                    radixSort_Positive_asc<ArrayElementType, T>(arr, low, high, sortArrayLength, bits_arrMaxElement);
+                    radixSort_Positive_asc<ArrayElementType, T>(p_arr, low, high, sortArrayLength, bits_arrMaxElement);
                     return;
                 }
             } else {
                 if (sortArrayLength <= MERGE_SORT_THRESHOLD) {
-                    merge_sort_basic_desc<ArrayElementType, T>(arr, low, high);
+                    merge_sort_basic_desc<ArrayElementType, T>(p_arr, low, high);
                     return;
                 } else {
-                    radixSort_Positive_desc<ArrayElementType, T>(arr, low, high, sortArrayLength, bits_arrMaxElement);
+                    radixSort_Positive_desc<ArrayElementType, T>(p_arr, low, high, sortArrayLength, bits_arrMaxElement);
                     return;
                 }
             }
@@ -624,7 +632,7 @@ ir_sort(T &arr, const int_fast64_t &low, const int_fast64_t &high, const bool &a
 // this function call has parameters similar to std::sort
 template<typename RandomAccessIterator>
 inline void
-ir_sort(RandomAccessIterator start, RandomAccessIterator end, const bool &ascendingOrder = true, int_fast16_t forceLinearSort = 0) {
+ir_sort(RandomAccessIterator start, RandomAccessIterator end, bool ascendingOrder = true, int_fast16_t forceLinearSort = 0) {
     ir_sort(start, 0, end - start - 1, ascendingOrder, forceLinearSort);
 }
 
