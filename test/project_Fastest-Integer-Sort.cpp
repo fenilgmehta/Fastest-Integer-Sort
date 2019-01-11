@@ -1,15 +1,18 @@
-#include <iostream>
-#include <cstdint>
+#include <bits/stdc++.h>
 
-#include <iomanip>
-#include <algorithm>
-#include <chrono>
-#include <cstring>
-#include <array>
+// #include <iostream>
+// #include <cstdint>
 
-#include <type_traits>
+// #include <iomanip>
+// #include <algorithm>
+// #include <chrono>
+// #include <cstring>
+// #include <array>
+// #include <vector>
 
-#include "integer_sort.cpp"
+// #include <type_traits>
+
+#include "../src/integer_sort.cpp"
 
 //#################################################
 #define db1(x) cerr << "\nDebug: " << setw(30) << left << #x << " = " << (x);
@@ -167,15 +170,16 @@ int main() {
     auto stop = start;      // Get ending time
     nanoseconds duration;   // Get duration. Subtract start time point to get duration. To cast it to proper unit use duration cast method
 
-    int64_t minArrayLength = 0, minMaxArrayLengthDiff = 0, testCases = 0;
-    cout << "Input: (minArrayLength, minMaxDiff, testCases;) = ";
-    cin >> minArrayLength >> minMaxArrayLengthDiff >> testCases;
+    int64_t minArrayLength = 0, maxArrayLength = 0, testCases = 0;
+    cout << "Input: (minArrayLength, maxArrayLength, testCases;) = ";
+    cin >> minArrayLength >> maxArrayLength >> testCases;
     cout << endl;
-    int64_t maxArrayLength = minArrayLength + minMaxArrayLengthDiff;
+
+    if(minArrayLength > maxArrayLength) cout<<"minArrayLength should be >= maxArrayLength"<<endl;
 
     // ARRAY
-    vector<ArrayDataType> arr(minArrayLength+minMaxArrayLengthDiff);            // used to check sorting time, it will the values from the baseArray
-    vector<ArrayDataType> baseArray(minArrayLength+minMaxArrayLengthDiff);      // used to store the random array generated
+    vector<ArrayDataType> arr(maxArrayLength);            // used to check sorting time, it will the values from the baseArray
+    vector<ArrayDataType> baseArray(maxArrayLength);      // used to store the random array generated
 
     rangeup(arrayLength, minArrayLength, maxArrayLength + 1) {
         cout << "#####################################################################";
@@ -203,28 +207,34 @@ int main() {
             int64_t timeArrIndex = 0;
 
             startTime
-            ir_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, true);      // first two parameters same as std::sort, ascending order
-            // ir_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);     // first two parameters same as std::sort, descending order
-            // ir_sort(arr, myTempLow, myTempHigh, true);      // ascending order
-            // ir_sort(arr, myTempLow, myTempHigh, false);     // descending order
+            ir_sort::integer_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);      // first two parameters same as std::sort, ascending order
+            // ir_sort::integer_sort(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);     // first two parameters same as std::sort, descending order
+            // ir_sort::integer_sort(arr, myTempLow, myTempHigh, true);      // ascending order
+            // ir_sort::integer_sort(arr, myTempLow, myTempHigh, false);     // descending order
             endTime
             timeArr[timeArrIndex++] = duration.count();
-            checkSortingRange_asc(arr, myTempLow, myTempHigh)       // check ascending order sorting
-            // checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
+            // checkSortingRange_asc(begin(arr), myTempLow, myTempHigh)       // check ascending order sorting
+            checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
 
             startTime
-            sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1);    // ascending order
+            ir_sort::integer_sort_new(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);      // first two parameters same as std::sort, ascending order
+            // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1);    // ascending order
             // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](ArrayDataType &a, ArrayDataType &b) { return a > b; });   // descending order
             endTime
             timeArr[timeArrIndex++] = duration.count();
-            checkSortingRange_asc(arr, myTempLow, myTempHigh)       // check ascending order sorting
-            // checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
+            // checkSortingRange_asc(arr, myTempLow, myTempHigh)       // check ascending order sorting
+            checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
 
             cout << endl << left << setw(setwLen) << timeArr[0] << "\t," << setw(setwLen) << timeArr[1] << "\t,"
                  << setw(setwLenRatio) << timeArr[0] / timeArr[0] << "\t,"
                  << setw(setwLenRatio) << ((1.0 * timeArr[1]) / timeArr[0]);
             irSortRatio += (timeArr[0] / timeArr[0]);
             stdSortRatio += (((1.0 * timeArr[1]) / timeArr[0]));
+
+            if((timeArr[1]/timeArr[0]) > 1.5) {
+                cout<<"\nTIME"<<endl;
+                dbArrSize(baseArray, myTempHigh+1);
+            }
 
             //#################################################
             bestThreshold[minIndex(timeArr, timeArrLength)]++;

@@ -1,0 +1,14 @@
+# All the files and folders mentioned here will be excluded from the staging list
+# File and folder specifications starting with ! in this fill not be excluded
+
+.idea/*
+cmake-build-debug/*
+CMakeList.txt
+
+ProgressReport.md
+references/*
+test/*.out
+
+# files to be ignored
+! ./Graphs_and_analysis/insertion_sort_threshold/03_autorun.zip
+

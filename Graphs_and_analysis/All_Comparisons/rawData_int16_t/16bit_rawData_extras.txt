@@ -1,0 +1,140 @@
+[student@student-pc test]$ . raw_data_generator.sh
+Compiling "data_generator_integer.cpp"
+Compilation successfully completed
+
+test_cases = 5000
+
+Array size = 10
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 10
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 3934, 0, 762, 185, 119, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 3934
+Percentage wise comparison of which sort was faster on an average:
+78.68
+0
+15.24
+3.7
+2.38
+0
+Speed ratio comparison:
+1
+1.44671
+1.20402
+1.25137
+1.26718
+51.6423
+Array size = 100
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 100
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 4957, 0, 41, 1, 1, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 4957
+Percentage wise comparison of which sort was faster on an average:
+99.14
+0
+0.82
+0.02
+0.02
+0
+Speed ratio comparison:
+1
+1.67403
+1.33535
+1.50152
+1.56639
+4.25414
+Array size = 1000
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 1000
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 4996, 0, 4, 0, 0, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 4996
+Percentage wise comparison of which sort was faster on an average:
+99.92
+0
+0.08
+0
+0
+0
+Speed ratio comparison:
+1
+5.28817
+2.28351
+4.38138
+5.05408
+5.20145
+Array size = 10000
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 10000
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 4982, 0, 18, 0, 0, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 4982
+Percentage wise comparison of which sort was faster on an average:
+99.64
+0
+0.36
+0
+0
+0
+Speed ratio comparison:
+1
+7.60409
+2.48877
+5.9906
+6.98807
+7.93545
+Array size = 100000
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 100000
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 5000, 0, 0, 0, 0, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 5000
+Percentage wise comparison of which sort was faster on an average:
+100
+0
+0
+0
+0
+0
+Speed ratio comparison:
+1
+12.8954
+5.82539
+9.69833
+12.1376
+14.7613
+[student@student-pc test]$
+
+[student@student-pc test]$ time ./a.out <<< "1000000 5000" > ../Graphs/All_Comparisons/rawData_5000_1000000.csv
+Input: (arrayLength, testCases) =
+#####################################################################
+Debug: arrayLength                    = 1000000
+Debug: testCases                      = 5000
+
+Debug: bestThreshold [0 : 5] = 5000, 0, 0, 0, 0, 0,
+Debug: bestThreshold[maxSpeedIndex]   = 5000
+Percentage wise comparison of which sort was faster on an average:
+100
+0
+0
+0
+0
+0
+Speed ratio comparison:
+1
+25.3277
+13.28
+16.3233
+25.0522
+32.5545

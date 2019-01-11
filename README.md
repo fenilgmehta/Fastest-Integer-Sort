@@ -1,13 +1,20 @@
 # Fastest-Integer-Sort
-These are generalised functions written in C++ which are highly optimised for the sorting of integer based array or vectors. It is 6 times faster than C++ STL std::sort for "int64_t array[10000000]".
+These are generalised functions written in C++ which are highly optimised for the sorting of integer based array or vectors. It is 4 times faster than C++ STL std::sort for "int64_t array[10000000]".
 
 
 Details
 ----------------------------------
-1. "ir_sort" is the name of the function to sort the integer based arrays.
-2. Five parameters: first two parameters same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
-   Alternative five parameters: array, startIndex(integer), endIndex(integer), ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
-3. Sorts the input in ascending order and descending order.
+1. "ir_sort::integer_sort" is the name of the function to sort the integer based arrays.
+2. Four parameters: first two parameters same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
+3. Sort the input in ascending order and descending order.
+4. Compiled using "g++ -std=c++14 -m64 -march=native" for testing
+5. Can be called on all containers with RandomAccessIterator
+6. Requirements:
+    * [first, last) is a valid range.
+    * RandomAccessIter value_type is mutable.
+    * RandomAccessIter value_type is LessThanComparable.
+    * RandomAccessIter value_type supports the operator>>, which returns an integer-type right-shifted a specified number of bits.
+    * RandomAccessIter supports the operator[], which returns the i'th element of the container.
 
 
 Features
@@ -18,7 +25,12 @@ Features
 4. linear time complexity
 5. very useful in competitions(refer "ir_sort_competitions.cpp" for usage in competitions)
 6. added new function for sorting object arrays based on integer keys
-
+7. valid but not limited to the following C++ Standard Template Library(STL) containers for sorting:
+    * std::array
+    * std::valarray
+    * std::vector
+    * std::deque
+    * std::initializer_list
 
 Time complexity
 ----------------------------------
@@ -31,6 +43,11 @@ Time complexity
 
 Graph
 ----------------------------------
+// TODO: make change in the first graph link
+![Speed Comparison, int64_t]()
+![Speed Comparison, int32_t]()
+![Speed Comparison, int16_t]()
+![Speed Comparison, int8_t]()
 ![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int64.png)
 ![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int32.png)
 ![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int16.png)
@@ -41,7 +58,7 @@ Usage
 ----------------------------------
 For projects:
 ```
-// copy the following three files to the project folder: "basic_sorts.h", "integer_sort.h" and "integer_sort.cpp"
+// copy the following four files to the project folder: "basic_sorts.hpp", "integer_sort.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
 
 // paste the following lines in the file start
 include "integer_sort.cpp"
@@ -49,16 +66,20 @@ include "integer_sort.cpp"
 
 For competitions:
 ```
-// copy the namespace "integer_sort" from "ir_sort_competitions.cpp" to the main ".cpp" program file
+// copy the namespace "ir_sort" from "ir_sort_competitions.cpp" to the main ".cpp" program file
 
-// to call the function, from the namespace "integer_sort"
+// to call the function, from the namespace "ir_sort"
 // the parameters are same as std::sort
-// eg: integer_sort::ir_sort(v.begin(), v.end()); where "v" is a vector of integers, result is in ascending order
-// eg: integer_sort::ir_sort(v.rbegin(), v.rend()); where "v" is a vector of integers, result is in descending order
-integer_sort::ir_sort(begin, end)
+// let v be define as 'vector<int> v{6,4,3,5,9,7,2,1,8,0}'
+// eg: ir_sort::integer_sort(v.begin(), v.end()); where "v" is a vector of integers, result is in ascending order
+// eg: ir_sort::integer_sort(v.rbegin(), v.rend()); where "v" is a vector of integers, result is in descending order
+ir_sort::integer_sort(begin, end)
 ```
 
 
 TODO
 ----------------------------------
-1. write the function to sort the array of objects based on integer key in ascending(-ve numbers also) and descending order(both +ve and -ve numbers)
+1. Write the sorting function to sort the array of objects based on integer key without creating copy of the objects.
+    * ascending order for -ve number only
+    * descending order for +ve and -ve numbers
+    * this will be useful where the objects are large in size.
