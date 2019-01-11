@@ -30,7 +30,7 @@ Features
     * std::valarray
     * std::vector
     * std::deque
-    * std::initializer_list
+
 
 Time complexity
 ----------------------------------
@@ -43,15 +43,10 @@ Time complexity
 
 Graph
 ----------------------------------
-// TODO: make change in the first graph link
-![Speed Comparison, int64_t]()
-![Speed Comparison, int32_t]()
-![Speed Comparison, int16_t]()
-![Speed Comparison, int8_t]()
-![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int64.png)
-![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int32.png)
-![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int16.png)
-![Project Summary](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/x_graph_int8_OR_char.png)
+![Speed Comparison, int64_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int64_t/Figure_1_int64_t.png)
+![Speed Comparison, int32_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int32_t/Figure_1_int32_t.png)
+![Speed Comparison, int16_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int16_t/Figure_1_int16_t.png)
+![Speed Comparison, int8_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int8_t/Figure_1_int8_t.png)
 
 
 Usage
