@@ -140,7 +140,7 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
     int index = 0;
 
     while(it_first != last){
-        if(it_first!=it_second){
+        if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
             dbiter("arr1[]", first, distance(first, last))
@@ -257,9 +257,9 @@ int32_t main() {
             // printArray(arr, myTempLow, myTempHigh);
 
             m_START_TIME_ONLY
-            // kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
+            kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
             // ska_sort(m_ALL(baseArray));
-            sort(m_ALL(baseArray));
+            // sort(m_ALL(baseArray));
             // boost::sort::spreadsort::integer_sort(m_ALL(baseArray)); // BEST for 1000 <= size < 55000
             // boost::sort::pdqsort(m_ALL(baseArray)); // good for size < 1000
             m_END_TIME
