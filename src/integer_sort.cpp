@@ -15,17 +15,17 @@ namespace ir_sort {
 
     namespace parameter {
         // ascending_order     : parameter passed by user
-        //                       (updation: refer "ir_sort::integer_sort_new")
+        //                       (updation: refer "ir_sort::stable_integer_sort_new")
         //                       (only set once)
         // signed_sorting      : this is true if both +ve and -ve numbers are present in the array to be sorted
-        //                       (updation: refer function "ir_sort::integer_sort_functions::integer_sort(RandomAccessIterator start_arr)")
+        //                       (updation: refer function "ir_sort::stable_integer_sort_functions::integer_sort(RandomAccessIterator start_arr)")
         // force_linear_sort   : this will decide the type of sorting to be used
-        //                       (updation: refer "ir_sort::integer_sort_new")
+        //                       (updation: refer "ir_sort::stable_integer_sort_new")
         bool ascending_order, signed_sorting;
         int_fast32_t force_linear_sort;
 
         // length              : length of the array to be sorted
-        //                       (updation: refer "ir_sort::integer_sort_new")
+        //                       (updation: refer "ir_sort::stable_integer_sort_new")
         // iterations_required : number of columns of size min_bits_shift to be sorted
         //                       (updation: refer "ir_sort::parameter::set_BitShift_Iterations")
         int_fast32_t length;
@@ -142,7 +142,7 @@ namespace ir_sort {
         }
     };
 
-    namespace integer_sort_functions {
+    namespace stable_integer_sort_functions {
 
 //############################################################################
 //                                                                          ##
@@ -1017,6 +1017,7 @@ namespace ir_sort {
              *                :  0 is for dynamic selection of the sorting technique
              *                :  1 is for radix_sort (dynamic with counting_sort)
              *                :  2 is for counting_sort (only this)
+             *                :  3 is for radix_sort (without scanning for largest and smallest members)
              * */
 
             // NOTE: determine the type of elements stored in the array to be sorted, and it pointer type
@@ -1073,15 +1074,25 @@ namespace ir_sort {
             arrMinElement = arrMaxElement = start_arr[0];
 
             // this for loop is used to FIND THE MAXIMUM and MINIMUM of all the elements in the given array with the help of RandomAccessIterator
-            for (int_fast32_t i = 1; i < parameter::length; i++) {
-                if (start_arr[i] > arrMaxElement) arrMaxElement = start_arr[i];
-                else if (start_arr[i] < arrMinElement) arrMinElement = start_arr[i];
+            if(parameter::force_linear_sort != 3){
+                for (int_fast32_t i = 1; i < parameter::length; i++) {
+                    if (start_arr[i] > arrMaxElement) arrMaxElement = start_arr[i];
+                    else if (start_arr[i] < arrMinElement) arrMinElement = start_arr[i];
+                }
+            } else{
+                if(ArrayValueType(-1) > ArrayValueType(0)){
+                    // unsigned
+                    arrMinElement = 0;
+                }else{
+                    // signed
+                    arrMinElement = -1;
+                }
+                arrMaxElement = 1;
             }
-
 
             // ==========================================================
             // counting sort
-            if (parameter::force_linear_sort == 2 || (1.0 * parameter::length) / (arrMaxElement - arrMinElement) > 0.71) {
+            if (parameter::force_linear_sort == 2 || ((parameter::force_linear_sort != 3) && (1.0 * parameter::length) / (arrMaxElement - arrMinElement) > 0.71)) {
                 if (parameter::ascending_order) countingSort_asc<ArrayValueType>(start_arr, 0, parameter::length - 1, arrMaxElement, arrMinElement);
                 else countingSort_desc<ArrayValueType>(start_arr, 0, parameter::length - 1, arrMaxElement, arrMinElement);
                 return;
@@ -1094,8 +1105,8 @@ namespace ir_sort {
             else if (arrMaxElement < 0) onlyPositiveNumbers = -1;       // -1 means -ve numbers ONLY
             parameter::signed_sorting = (onlyPositiveNumbers == 0);
 
-            int_fast16_t bits_arrMaxElement = ir_sort::integer_sort_common::countBits(
-                    arrMaxElement), bits_arrMinElement = ir_sort::integer_sort_common::countBits(arrMinElement);
+            int_fast16_t bits_arrMaxElement = ir_sort::integer_sort_common::countBits(arrMaxElement),
+                         bits_arrMinElement = ir_sort::integer_sort_common::countBits(arrMinElement);
 
             // IMPORTANT
             // We use bits_arrMaxElement while calling the function, hence it is updated here
@@ -1110,6 +1121,9 @@ namespace ir_sort {
                 else bits_arrMaxElement = bits_arrMinElement;
             } else if (bits_arrMinElement > bits_arrMaxElement) bits_arrMaxElement = bits_arrMinElement;
 
+            if(parameter::force_linear_sort==3){
+                bits_arrMaxElement = 8*sizeof(ArrayValueType);
+            }
 
             if (parameter::force_linear_sort == 0 && parameter::length < 408) {
                 if (onlyPositiveNumbers != 0) {
@@ -1157,10 +1171,25 @@ namespace ir_sort {
         }
     }
 
+    namespace unstable_integer_sort_functions{
+        template<typename RandomAccessIterator>
+        void
+        radix_sort(RandomAccessIterator first, RandomAccessIterator last, bool considerSigned = false){
+            parameter::reset_box();
+            if(considerSigned){
+
+            }else{
+                for(RandomAccessIterator i = first; i != last; ++i){
+                    // parameter::box[]
+                }
+            }
+        }
+    }
+
     // this function call has parameters similar to std::sort
     template<typename RandomAccessIterator>
     inline void
-    integer_sort(RandomAccessIterator start, RandomAccessIterator end, bool ascending_order = true, int_fast16_t force_linear_sort = 0) {
+    integer_sort(RandomAccessIterator first, RandomAccessIterator last, bool ascending_order = true, int_fast16_t force_linear_sort = 0) {
         // return if RandomAccessIterator is not a random_access_iterator
         if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) != typeid(std::random_access_iterator_tag))
             return;
@@ -1169,17 +1198,17 @@ namespace ir_sort {
         if (!std::is_integral<typename std::iterator_traits<RandomAccessIterator>::value_type>::value)
             return;
 
-        if (start >= end) return;
+        if (first >= last) return;
 
-        integer_sort_functions::integer_sort(start, 0, end - start - 1, ascending_order, force_linear_sort);
+        stable_integer_sort_functions::integer_sort(first, 0, last - first - 1, ascending_order, force_linear_sort);
     }
 
     // this function call has parameters similar to std::sort
 /**
  *  @brief Sort the elements of a sequence.
  *  @ingroup sorting_algorithms
- *  @param  start                   An iterator.
- *  @param  end                     Another iterator.
+ *  @param  first                   An iterator.
+ *  @param  last                     Another iterator.
  *  @param  ascending_order         boolean.
  *  @param  force_linear_sort       int.
  *  @return  Nothing.
@@ -1196,7 +1225,7 @@ namespace ir_sort {
 */
     template<typename RandomAccessIterator>
     inline void
-    integer_sort_new(RandomAccessIterator start, RandomAccessIterator end, bool ascending_order = true, int_fast32_t force_linear_sort = 0) {
+    stable_integer_sort_new(RandomAccessIterator first, RandomAccessIterator last, bool ascending_order = true, int_fast32_t force_linear_sort = 0) {
         // NOTE: this is not a good idea since user can still pass a iterator which is not a
         // RandomAccessIterator. To avoid this, we have passed the iterator category as a parameter
         // so that only those iterators can make a call
@@ -1208,15 +1237,40 @@ namespace ir_sort {
         if (!std::is_integral<typename std::iterator_traits<RandomAccessIterator>::value_type>::value)
             return;
 
-        if (start >= end) return;
+        if (first >= last) return;
 
         parameter::ascending_order = ascending_order;
         parameter::force_linear_sort = force_linear_sort;
-        parameter::length = std::distance(start, end);
-        integer_sort_functions::integer_sort<RandomAccessIterator>(
-                start,
+        parameter::length = std::distance(first, last);
+        stable_integer_sort_functions::integer_sort<RandomAccessIterator>(
+                first,
                 typename std::iterator_traits<RandomAccessIterator>::iterator_category()
         );
+    }
+
+
+    template<typename RandomAccessIterator>
+    inline void
+    integer_sort_new(RandomAccessIterator first, RandomAccessIterator last, bool ascending_order = true, int_fast32_t force_linear_sort = 0){
+        // NOTE: this is not a good idea since user can still pass a iterator which is not a
+        // RandomAccessIterator. To avoid this, we have passed the iterator category as a parameter
+        // so that only those iterators can make a call
+        // WORK: return if RandomAccessIterator is not a random_access_iterator
+        // if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) != typeid(std::random_access_iterator_tag))
+        //     return;
+
+        // WORK: return if the given RandomAccessIterator is not for an integer
+        if (!std::is_integral<typename std::iterator_traits<RandomAccessIterator>::value_type>::value)
+            return;
+
+        if (first >= last) return;
+
+        parameter::ascending_order = ascending_order;
+        parameter::force_linear_sort = force_linear_sort;
+        parameter::length = std::distance(first, last);
+
+        unstable_integer_sort_functions::radix_sort<RandomAccessIterator>(first, last);
+
     }
 
 //############################################################################

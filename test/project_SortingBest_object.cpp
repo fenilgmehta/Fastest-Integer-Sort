@@ -32,10 +32,9 @@ using namespace std::chrono;
 #define db1(x) cout << "\nDebug: " << setw(30) << left << #x << " = " << (x);
 #define db2(x, y) cout << "\nDebug: " << #x << " = " << (x) << ",   " << #y << " = " << (y);
 #define db3(x, y, z) cout << "\nDebug: " << #x << " = " << (x) << ",   " << #y << " = " << (y) << ",   " << #z << " = " << (z);
-#define dbArrSize(arr, size) cout << "\nDebug: " << #arr << " [" << 0 << " : " << ((size)-1) << "] = "; for(int64_t i = 0; i < (size); i++) cout << (arr)[i] << ", ";
-#define dbArrLimit(arr, l, h) cout << "\nDebug: " << #arr << " [" << (l) << " : " << (h) << "] = "; for(int64_t i = (l); i <= (h); i++) cout << (arr)[i] << ", ";
-#define dbiter(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(int64_t i_temp1 = 0, len_temp1 = (len); i_temp1 < len_temp1; ++i_temp1) cerr<<first[i_temp1]<<", "; cerr<<endl;
-#define min(_a, _b) ((_a) < (_b)) ? (_a) : (_b)
+#define dblimit(arr, l, h) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #arr << " [" << (l) << " : " << (h) << "] = "; for(int64_t i = (l); i <= (h); i++) cerr << (arr)[i] << ", "; cerr << endl;
+#define dbiter(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(auto i_temp1 = 0, len_temp1 = (len), iter_temp1 = first; i_temp1 < len_temp1; ++i_temp1) cerr<<iter_temp1[i_temp1]<<", "; cerr<<endl;
+#define dbsize(arr, size) cout << "\nDebug: " << #arr << " [" << 0 << " : " << ((size)-1) << "] = "; for(int64_t i = 0; i < (size); i++) cout << (arr)[i] << ", ";
 
 //#################################################
 #define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
@@ -242,8 +241,8 @@ void fillRandArray(T &arr, const int64_t &low, const int64_t &high, const int64_
 #define startTime copy(&baseArray[0], &baseArray[0] + arrayLength, &arr[0]); start = high_resolution_clock::now();
 #define endTime stop = high_resolution_clock::now(); duration = duration_cast<nanoseconds>(stop - start);
 #define printTimeTaken cout << endl << setw(columnWidth) << duration.count();
-#define checkSortingRange_asc(_arr, _low, _high) if (!(isSortedAscending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in ascending order\n"; dbArrLimit(_arr, _low, _high);}
-#define checkSortingRange_desc(_arr, _low, _high) if (!(isSortedDescending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in descending order\n"; dbArrLimit(_arr, _low, _high);}
+#define checkSortingRange_asc(_arr, _low, _high) if (!(isSortedAscending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in ascending order\n"; dblimit(_arr, _low, _high);}
+#define checkSortingRange_desc(_arr, _low, _high) if (!(isSortedDescending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in descending order\n"; dblimit(_arr, _low, _high);}
 #define time(_i) db1(_i);
 #define avgTime(_i) db1((_i) / testCases);
 
@@ -350,7 +349,7 @@ int32_t main() {
         }
 
         cout << endl;
-        dbArrSize(bestThreshold, timeArrLength);    // This will print the number of times ir_sort was fast and number of times std::sort was fast
+        dbsize(bestThreshold, timeArrLength);    // This will print the number of times ir_sort was fast and number of times std::sort was fast
         int64_t maxSpeedIndex = maxIndex(bestThreshold, timeArrLength);
         db1(bestThreshold[maxSpeedIndex])           // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
 

@@ -109,7 +109,7 @@ namespace ir_sort{
             }
         }
 
-    } // namespace integer_sort_functions
+    } // namespace integer_sort_common
 } // namespace ir_sort
 
 

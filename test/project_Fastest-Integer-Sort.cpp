@@ -217,7 +217,7 @@ int main() {
             checkSortingRange_desc(arr, myTempLow, myTempHigh)      // check descending order sorting
 
             startTime
-            ir_sort::integer_sort_new(&arr[0]+myTempLow, &arr[0]+myTempHigh+1, false);      // first two parameters same as std::sort, ascending order
+            ir_sort::stable_integer_sort_new(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, false);      // first two parameters same as std::sort, ascending order
             // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1);    // ascending order
             // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](ArrayDataType &a, ArrayDataType &b) { return a > b; });   // descending order
             endTime

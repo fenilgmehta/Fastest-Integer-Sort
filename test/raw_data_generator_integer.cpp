@@ -41,7 +41,6 @@ using namespace std::chrono;
 #define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int32_t columnWidth = 15;
 
-using ArrayIndexType = int64_t;
 
 // ###################################################
 // ################# SETTINGS start ##################
@@ -84,10 +83,11 @@ const int32_t myBits = 7;
  * Select the datatype of the array to be used for testing
  *
  * */
-using ArrayDataType = int8_t;
+// using ArrayDataType = int8_t;
 // using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
-// using ArrayDataType = int64_t;
+using ArrayDataType = int64_t;
+using ArrayIndexType = ArrayDataType;
 
 // ###################################################
 // ################### SETTINGS end ##################
