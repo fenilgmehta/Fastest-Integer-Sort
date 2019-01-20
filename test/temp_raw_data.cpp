@@ -139,7 +139,7 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
     int index = 0;
 
     while(it_first != last){
-        if(it_first!=it_second){
+        if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
             dbiter("arr1[]", first, distance(first, last))
@@ -232,7 +232,7 @@ int32_t main() {
         int64_t timeArrIndex = 0;
 
         m_START_TIME
-        ir_sort::stable_integer_sort_new(m_ALL(arr), true, 0);
+        ir_sort::integer_sort(m_ALL(arr), true, 0);
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";

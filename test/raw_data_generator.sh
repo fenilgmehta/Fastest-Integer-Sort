@@ -18,7 +18,7 @@ echo "Output folder location : \"${output_folder}\""
 
 file_name="data_generator_integer.cpp"
 echo "Compiling \"${file_name}\""
-g++ "data_generator_integer.cpp" -o "${1}" || exit
+g++ -O2 "data_generator_integer.cpp" -o "${1}" || exit
 echo 'Compilation successfully completed' && echo
 
 i=10

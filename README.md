@@ -49,6 +49,14 @@ Graph
 ![Speed Comparison, int8_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int8_t/Figure_1_int8_t.png)
 
 
+Basic working
+----------------------------------
+It is a stable sorting algorithm.
+This algorithm takes the advantage of bitwise operations provided by the C++ language on top of processors which run at a very high speed as compared to the other operations like addition, subtraction, multiplication, division, etc. Along with this, it uses radix sort to make the sorting faster.
+I have combined the above mentioned things into one algorithm which would sort the input given to it. To improve the performance for small size of input arrays, I have used insertion sort and merge sort.
+The graphs above shows how ir_sort::integer_sort starts performing better with higher array size.
+
+
 Usage
 ----------------------------------
 For projects:

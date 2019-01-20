@@ -21,7 +21,11 @@
 
 // #include <type_traits>
 
+#include <boost/sort/sort.hpp>
+#include <boost/sort/spreadsort/float_sort.hpp>
+
 #include "../src/integer_sort.cpp"
+#include "../references/NewRadixGitBoost.h"
 
 //#################################################
 using namespace std;
@@ -54,7 +58,7 @@ using ArrayIndexType = int64_t;
  * false : will not print the stats
  *
  * */
-#define settings_PRINT_TIME_COMPARISON false
+#define settings_PRINT_TIME_COMPARISON true
 
 /*
  * Decide whether to sort the array in ascending order or descending order
@@ -80,7 +84,7 @@ using ArrayIndexType = int64_t;
  * Example: 2 means that the size of each object will be 2 * 64 bits = 128 bits
  *
  * */
-#define settings_OBJ_SIZE_IN_MULTIPLE_64_BITS 100
+#define settings_OBJ_SIZE_IN_MULTIPLE_64_BITS 1000
 
 /*
  * This macro will decide the sign of the numbers which are used to fill the array
@@ -158,11 +162,11 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
     int index = 0;
 
     while(it_first != last){
-        if(it_first!=it_second){
+        if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
-            dbiter("arr1[]", first, distance(first, last));
-            dbiter("arr2[]", second, distance(first, last));
+            // dbiter("arr1[]", first, distance(first, last));
+            // dbiter("arr2[]", second, distance(first, last));
             return false;
         }
         ++index;
@@ -322,9 +326,14 @@ int32_t main() {
             // objPrintArray(arr, myTempLow, myTempHigh);
 
             startTimeOnly
-            ir_sort::radixSort_Positive_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
-            // radixSort_Positive_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, [](ArrayDataType &a) { return a.classGetIndex(); });
+            // ir_sort::radixSort_Positive_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
+            ska_sort(begin(baseArray), end(baseArray), [](myClassInt &a){return a.classGetIndex();});
+            // boost::sort::spreadsort::integer_sort(begin(baseArray), end(baseArray), [](ArrayDataType &a, int val){return a.classGetIndex() >> val;});
             // sort(&baseArray[0] + myTempLow, &baseArray[0] + myTempHigh + 1, f2_ascendingOrder);
+            // boost::sort::pdqsort(begin(baseArray), end(baseArray), [](ArrayDataType &a, ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
+            // boost::sort::spinsort(begin(baseArray), end(baseArray), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
+            // boost::sort::flat_stable_sort(begin(baseArray), end(baseArray), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
+
             // startTime
             // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](myClassInt &a, myClassInt &b) { return a.classGetIndex() < b.classGetIndex(); });
             // sort(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](myClassInt &a, myClassInt &b) { return a.classGetIndex() > b.classGetIndex(); });

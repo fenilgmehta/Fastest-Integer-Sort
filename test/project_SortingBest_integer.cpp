@@ -143,8 +143,8 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
         if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
-            dbiter("arr1[]", first, distance(first, last))
-            dbiter("arr2[]", second, distance(first, last))
+            // dbiter("arr1[]", first, distance(first, last))
+            // dbiter("arr2[]", second, distance(first, last))
             return false;
         }
         ++index;
@@ -186,6 +186,10 @@ void fillRandArray(T &arr, const int64_t &low, const int64_t &high, const int64_
 //#########################################################################################################################################
 //#########################################################################################################################################
 
+inline ArrayDataType valueReturn(ArrayDataType &a){
+    return a;
+}
+
 int32_t main() {
     ios_base::sync_with_stdio(false);
 
@@ -224,6 +228,8 @@ int32_t main() {
         deque<int64_t> timeArr(static_cast<unsigned long>(timeArrLength), 0);             // used to store the time taken for a particular sorting technique
         deque<int64_t> bestThreshold(static_cast<unsigned long>(timeArrLength), 0);       // used to keep track of the best THRESHOLD
 
+
+
         if(settings_PRINT_TIME_COMPARISON){
             cout << "\n\nTime taken in nano-seconds, Time ratio with respect to ir_sort";
             cout << endl << left
@@ -249,8 +255,11 @@ int32_t main() {
             int64_t timeArrIndex = 0;
 
             m_START_TIME
+            ArrayDataType *buffer = new ArrayDataType[maxArrayLength];
+            detail::SizedRadixSorter<8>::sort(m_ALL(arr), buffer, [](ArrayDataType &a){return a;});
+            delete[] buffer;
             // ir_sort::integer_sort(m_ALL(arr), true);
-            ir_sort::stable_integer_sort_new(m_ALL(arr), true, 0);
+            // ir_sort::stable_integer_sort_new(m_ALL(arr), true);
             // kx::radix_sort(m_ALL(arr)); // GREAT from 90 to 3000 // this is NOT stable sorting
             m_END_TIME
             timeArr[timeArrIndex++] = duration.count();
@@ -258,7 +267,8 @@ int32_t main() {
             // printArray(arr, myTempLow, myTempHigh);
 
             m_START_TIME_ONLY
-            ska_sort(m_ALL(baseArray));
+            ir_sort::integer_sort(m_ALL(baseArray), true, 3);
+            // ska_sort(m_ALL(baseArray));
             // kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
             // sort(m_ALL(baseArray));
             // boost::sort::spreadsort::integer_sort(m_ALL(baseArray)); // BEST for 1000 <= size < 55000

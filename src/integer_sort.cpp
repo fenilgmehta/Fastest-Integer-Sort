@@ -33,10 +33,7 @@ namespace ir_sort {
 
         // box        : used to store the count of occurrences of a number in the column being scanned for sorting
         //              (updation: refer "ir_sort::parameter::reset_box")
-        // box_length : this can be less than 256, this depends on min_bits_shift
-        //              (updation: refer "ir_sort::parameter::set_BitShift_Iterations")
         int_fast32_t box[256];
-        int_fast32_t box_length;
 
         // bit_mask           : it is power(2, min_bits_shift) - 1
         //                      (updation: refer "ir_sort::parameter::set_BitShift_Iterations")
@@ -48,8 +45,9 @@ namespace ir_sort {
         //                      (NOTE: updated regularly)
         // sign_bit_mask      : this number can be XORed with the signed column to sort
         //                      (updation: refer "ir_sort::parameter::set_BitShift_Iterations")
-        int_fast32_t bit_mask, min_bits_shift, initial_bits_shift;
-        int_fast32_t sign_bit_mask;
+        //REMOVE // int_fast32_t bit_mask;
+        //REMOVE // int_fast32_t sign_bit_mask;
+        int_fast32_t min_bits_shift, initial_bits_shift;
 
         /*
          * This will fill "box" with 0
@@ -78,66 +76,69 @@ namespace ir_sort {
          *
          * */
         inline void set_BitShift_Iterations(const int_fast32_t arr_max_bits) {
-            box_length = 256;
-            if (arr_max_bits <= 8) {           //  8 bits = 1 iteration
-                min_bits_shift = arr_max_bits;
-                iterations_required = 1;
-                box_length = 1 << arr_max_bits;
-            } else if (arr_max_bits <= 10) {
-                min_bits_shift = 5;
-                iterations_required = 2;
-            } else if (arr_max_bits <= 12) {
-                min_bits_shift = 6;
-                iterations_required = 2;
-            } else if (arr_max_bits <= 14) {
-                min_bits_shift = 7;
-                iterations_required = 2;
-            } else if (arr_max_bits <= 16) {   // 16 bits = 2 iterations
-                min_bits_shift = 8;
-                iterations_required = 2;
-            } else if (arr_max_bits <= 18) {
-                min_bits_shift = 6;
-                iterations_required = 3;
-            } else if (arr_max_bits <= 21) {
-                min_bits_shift = 7;
-                iterations_required = 3;
-            } else if (arr_max_bits <= 24) {   // 24 bits = 3 iterations
-                min_bits_shift = 8;
-                iterations_required = 3;
-            } else if (arr_max_bits <= 28) {
-                min_bits_shift = 7;
-                iterations_required = 4;
-            } else if (arr_max_bits <= 32) {   // 32 bits = 4 iterations
-                min_bits_shift = 8;
-                iterations_required = 4;
-            } else if (arr_max_bits <= 35) {
-                min_bits_shift = 7;
-                iterations_required = 5;
-            } else if (arr_max_bits <= 40) {   // 40 bits = 5 iterations
-                min_bits_shift = 8;
-                iterations_required = 5;
-            } else if (arr_max_bits <= 42) {
-                min_bits_shift = 7;
-                iterations_required = 6;
-            } else if (arr_max_bits <= 48) {   // 48 bits = 6 iterations
-                min_bits_shift = 8;
-                iterations_required = 6;
-            } else if (arr_max_bits == 49) {
-                min_bits_shift = 7;
-                iterations_required = 7;
-            } else if (arr_max_bits <= 56) {   // 56 bits = 7 iterations
-                min_bits_shift = 8;
-                iterations_required = 7;
-            } else if (arr_max_bits <= 64) {   // 64 bits = 8 iterations
-                min_bits_shift = 8;
-                iterations_required = 8;
-            } else {                          // Handle the situation where int128_t of int256_t or int512_t or int1024_t or anything else is used to create the array / array index
-                min_bits_shift = 8;
-                iterations_required = arr_max_bits >> 3;
-                if ((arr_max_bits & 7) != 0) iterations_required++;
-            }
-            bit_mask = (1 << min_bits_shift) - 1;
-            sign_bit_mask = bit_mask ^ (bit_mask >> 1);
+            // box_length = 256;
+            // if (arr_max_bits <= 8) {           //  8 bits = 1 iteration
+            //     min_bits_shift = arr_max_bits;
+            //     iterations_required = 1;
+            //     box_length = 1 << arr_max_bits;
+            // } else if (arr_max_bits <= 10) {
+            //     min_bits_shift = 5;
+            //     iterations_required = 2;
+            // } else if (arr_max_bits <= 12) {
+            //     min_bits_shift = 6;
+            //     iterations_required = 2;
+            // } else if (arr_max_bits <= 14) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 2;
+            // } else if (arr_max_bits <= 16) {   // 16 bits = 2 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 2;
+            // } else if (arr_max_bits <= 18) {
+            //     min_bits_shift = 6;
+            //     iterations_required = 3;
+            // } else if (arr_max_bits <= 21) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 3;
+            // } else if (arr_max_bits <= 24) {   // 24 bits = 3 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 3;
+            // } else if (arr_max_bits <= 28) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 4;
+            // } else if (arr_max_bits <= 32) {   // 32 bits = 4 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 4;
+            // } else if (arr_max_bits <= 35) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 5;
+            // } else if (arr_max_bits <= 40) {   // 40 bits = 5 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 5;
+            // } else if (arr_max_bits <= 42) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 6;
+            // } else if (arr_max_bits <= 48) {   // 48 bits = 6 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 6;
+            // } else if (arr_max_bits == 49) {
+            //     min_bits_shift = 7;
+            //     iterations_required = 7;
+            // } else if (arr_max_bits <= 56) {   // 56 bits = 7 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 7;
+            // } else if (arr_max_bits <= 64) {   // 64 bits = 8 iterations
+            //     min_bits_shift = 8;
+            //     iterations_required = 8;
+            // } else {                          // Handle the situation where int128_t of int256_t or int512_t or int1024_t or anything else is used to create the array / array index
+            //     min_bits_shift = 8;
+            //     iterations_required = arr_max_bits >> 3;
+            //     if ((arr_max_bits & 7) != 0) iterations_required++;
+            // }
+            // bit_mask = (1 << min_bits_shift) - 1;
+            // sign_bit_mask = bit_mask ^ (bit_mask >> 1);
+
+            iterations_required = arr_max_bits >> 3;
+            if((arr_max_bits & 7) != 0) ++iterations_required;
             initial_bits_shift = 0;
         }
     };
@@ -230,7 +231,7 @@ namespace ir_sort {
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column being scanned
             for (int_fast32_t i = 0; i < parameter::length; i++) {
-                parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & parameter::bit_mask]++;
+                parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & 255]++;
             }
 
             // this for loop is used to add the values of the previous element to the next element of the array "box"
@@ -241,7 +242,7 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; i--) {
-                start_buffer[--parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & parameter::bit_mask]] = start_arr[i];
+                start_buffer[--parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = start_arr[i];
             }
 
             parameter::update_initial_bits_shift();
@@ -254,19 +255,19 @@ namespace ir_sort {
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column being scanned
             for (int_fast32_t i = 0; i < parameter::length; i++) {
-                parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & parameter::bit_mask]++;
+                parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & 255]++;
             }
 
             // MODIFIED: from "partial_radix_sort_asc"
             // this for loop is used to add the values of the previous element to the next element of the array "box"
-            for (int_fast32_t i = parameter::box_length - 2; i >= 0; i--) {
+            for (int_fast32_t i = 254; i >= 0; i--) {
                 parameter::box[i] += parameter::box[i + 1];
             }
 
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; i--) {
-                start_buffer[--parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & parameter::bit_mask]] = start_arr[i];
+                start_buffer[--parameter::box[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = start_arr[i];
             }
 
             parameter::update_initial_bits_shift();
@@ -279,7 +280,7 @@ namespace ir_sort {
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column being scanned
             for (int_fast32_t i = 0; i < parameter::length; i++) {
-                parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ parameter::sign_bit_mask) & parameter::bit_mask]++;
+                parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ 128) & 255]++;
             }
 
             // this for loop is used to add the values of the previous element to the next element of the array "box"
@@ -290,8 +291,8 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; i--) {
-                start_buffer[--parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ parameter::sign_bit_mask) &
-                                              parameter::bit_mask]] = start_arr[i];
+                start_buffer[--parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ 128) &
+                                              255]] = start_arr[i];
             }
 
             parameter::update_initial_bits_shift();
@@ -305,20 +306,20 @@ namespace ir_sort {
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column being scanned
             for (int_fast32_t i = 0; i < parameter::length; i++) {
-                parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ parameter::sign_bit_mask) & parameter::bit_mask]++;
+                parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ 128) & 255]++;
             }
 
             // MODIFIED: from "partial_radix_sort_asc"
             // this for loop is used to add the values of the previous element to the next element of the array "box"
-            for (int_fast32_t i = parameter::box_length - 2; i >= 0; i--) {
+            for (int_fast32_t i = 254; i >= 0; i--) {
                 parameter::box[i] += parameter::box[i + 1];
             }
 
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; i--) {
-                start_buffer[--parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ parameter::sign_bit_mask) &
-                                              parameter::bit_mask]] = start_arr[i];
+                start_buffer[--parameter::box[((start_arr[i] >> parameter::initial_bits_shift) ^ 128) &
+                                              255]] = start_arr[i];
             }
 
             parameter::update_initial_bits_shift();
@@ -332,6 +333,7 @@ namespace ir_sort {
             // RELIABLE as compared the array on stack created using ArrayValueType buffer[parameter::length]
             auto buffer = new ArrayValueType[parameter::length];
 
+            // parameter::initial_bits_shift = 0;
             parameter::set_BitShift_Iterations(arr_max_bits);
 
             int_fast32_t i = 1;
@@ -380,6 +382,7 @@ namespace ir_sort {
             // RELIABLE as compared the array on stack created using ArrayValueType buffer[parameter::length]
             auto buffer = new ArrayValueType[parameter::length];
 
+            // parameter::initial_bits_shift=0;
             parameter::set_BitShift_Iterations(arr_max_bits);
 
             int_fast32_t i = 1;
@@ -1122,32 +1125,32 @@ namespace ir_sort {
             } else if (bits_arrMinElement > bits_arrMaxElement) bits_arrMaxElement = bits_arrMinElement;
 
             if(parameter::force_linear_sort==3){
-                bits_arrMaxElement = 8*sizeof(ArrayValueType);
+                bits_arrMaxElement = sizeof(ArrayValueType) << 3;
             }
 
-            if (parameter::force_linear_sort == 0 && parameter::length < 408) {
-                if (onlyPositiveNumbers != 0) {
-                    // +ve and -ve numbers
-                    if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 49;
-                    else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 77;
-                    else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 134;
-                    else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 165;
-                    else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 245;
-                    else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 302;
-                    else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 407;
-                    else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 455;
-                } else {
-                    // +ve numbers ONLY
-                    if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 0;
-                    else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 72;
-                    else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 129;
-                    else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 164;
-                    else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 235;
-                    else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 291;
-                    else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 401;
-                    else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 457;
-                }
-            }
+            // if (parameter::force_linear_sort == 0 && parameter::length < 408) {
+            //     if (onlyPositiveNumbers != 0) {
+            //         // +ve and -ve numbers
+            //         if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 49;
+            //         else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 77;
+            //         else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 134;
+            //         else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 165;
+            //         else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 245;
+            //         else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 302;
+            //         else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 407;
+            //         else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 455;
+            //     } else {
+            //         // +ve numbers ONLY
+            //         if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 0;
+            //         else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 72;
+            //         else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 129;
+            //         else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 164;
+            //         else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 235;
+            //         else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 291;
+            //         else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 401;
+            //         else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 457;
+            //     }
+            // }
 
 
             // ==========================================================
@@ -1166,21 +1169,6 @@ namespace ir_sort {
                 } else {
                     radix_sort_desc<RandomAccessIterator, ArrayValueType>(start_arr, bits_arrMaxElement);
                     return;
-                }
-            }
-        }
-    }
-
-    namespace unstable_integer_sort_functions{
-        template<typename RandomAccessIterator>
-        void
-        radix_sort(RandomAccessIterator first, RandomAccessIterator last, bool considerSigned = false){
-            parameter::reset_box();
-            if(considerSigned){
-
-            }else{
-                for(RandomAccessIterator i = first; i != last; ++i){
-                    // parameter::box[]
                 }
             }
         }
@@ -1248,30 +1236,6 @@ namespace ir_sort {
         );
     }
 
-
-    template<typename RandomAccessIterator>
-    inline void
-    integer_sort_new(RandomAccessIterator first, RandomAccessIterator last, bool ascending_order = true, int_fast32_t force_linear_sort = 0){
-        // NOTE: this is not a good idea since user can still pass a iterator which is not a
-        // RandomAccessIterator. To avoid this, we have passed the iterator category as a parameter
-        // so that only those iterators can make a call
-        // WORK: return if RandomAccessIterator is not a random_access_iterator
-        // if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) != typeid(std::random_access_iterator_tag))
-        //     return;
-
-        // WORK: return if the given RandomAccessIterator is not for an integer
-        if (!std::is_integral<typename std::iterator_traits<RandomAccessIterator>::value_type>::value)
-            return;
-
-        if (first >= last) return;
-
-        parameter::ascending_order = ascending_order;
-        parameter::force_linear_sort = force_linear_sort;
-        parameter::length = std::distance(first, last);
-
-        unstable_integer_sort_functions::radix_sort<RandomAccessIterator>(first, last);
-
-    }
 
 //############################################################################
 //                                                                          ##
@@ -1413,7 +1377,9 @@ namespace ir_sort {
         // }
         // if(allPositive) radixSort_Positive_asc<ArrayElementType, T, myGetIndex>(arr, low, high, sortArrayLength, getIndex);
 
-        using IndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
+        // using IndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
+        using IndexType = int32_t;
+        if(high - low > (1ll << 32)) using IndexType = int64_t;
 
         // SUBORDINATE VARIABLES
         int_fast64_t arrMaxElement = getIndex(arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
