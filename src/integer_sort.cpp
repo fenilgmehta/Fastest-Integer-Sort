@@ -47,7 +47,7 @@ namespace ir_sort {
         //                      (updation: refer "ir_sort::parameter::set_BitShift_Iterations")
         //REMOVE // int_fast32_t bit_mask;
         //REMOVE // int_fast32_t sign_bit_mask;
-        int_fast32_t min_bits_shift, initial_bits_shift;
+        int_fast32_t min_bits_shift=8, initial_bits_shift;
 
         /*
          * This will fill "box" with 0
@@ -64,7 +64,7 @@ namespace ir_sort {
          *
          * */
         inline void update_initial_bits_shift() {
-            initial_bits_shift += min_bits_shift;
+            initial_bits_shift += 8;
         }
 
         /*

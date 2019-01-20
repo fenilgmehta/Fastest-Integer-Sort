@@ -232,7 +232,8 @@ int32_t main() {
         int64_t timeArrIndex = 0;
 
         m_START_TIME
-        ir_sort::integer_sort(m_ALL(arr), true, 0);
+        // ir_sort::integer_sort(m_ALL(arr), true);
+        ir_sort::stable_integer_sort_new(m_ALL(arr), true, 3); // better
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
@@ -244,7 +245,10 @@ int32_t main() {
         // if (!isSorted(&arr[0], myTempLow, myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
 
         m_START_TIME
-        ska_sort(m_ALL(arr));
+        // ska_sort(m_ALL(arr));
+        auto *buffer = new ArrayDataType[arrayLength];
+        detail::SizedRadixSorter<8>::sort(m_ALL(arr), buffer, [](ArrayDataType &a){return a;});
+        delete[] buffer;
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         // if (!isSorted(&arr[0], myTempLow, myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
