@@ -138,7 +138,7 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
     int index = 0;
 
     while(it_first != last){
-        if(it_first!=it_second){
+        if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
             dbiter("arr1[]", first, distance(first, last))
