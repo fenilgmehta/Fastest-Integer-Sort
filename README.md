@@ -5,7 +5,7 @@ These are generalised functions written in C++ which are highly optimised for th
 Details
 ----------------------------------
 1. "ir_sort::integer_sort" is the name of the function to sort the integer based arrays.
-2. Four parameters: first two parameters same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
+2. Four parameters: first two parameters are same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
 3. Sort the input in ascending order and descending order.
 4. Compiled using "g++ -std=c++14 -m64 -march=native" for testing
 5. Can be called on all containers with RandomAccessIterator
@@ -36,9 +36,9 @@ Time complexity
 ----------------------------------
 | Case         | Time complexity |
 |:------------:|:---------------:|
-| best case    | Ω(n)            |
-| average case | θ(n)            |
-| worst case   | O(n)            |
+| best case    | Ω(nk)           |
+| average case | θ(nk)           |
+| worst case   | O(nk)           |
 
 
 Graph
@@ -83,6 +83,5 @@ ir_sort::integer_sort(begin, end)
 TODO
 ----------------------------------
 1. Write the sorting function to sort the array of objects based on integer key without creating copy of the objects.
-    * ascending order for -ve number only
     * descending order for +ve and -ve numbers
     * this will be useful where the objects are large in size.
