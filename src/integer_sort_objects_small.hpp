@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <iterator>
 
-#include "basic_sorts.cpp"
-#include "integer_sort.hpp"
+#include "basic_sorts.hpp"
+#include "ir_commons.hpp"
 
 namespace ir_sort {
     namespace object_integer_sort_functions {

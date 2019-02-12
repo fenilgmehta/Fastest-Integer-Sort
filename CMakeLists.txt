@@ -6,6 +6,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(references)
 
 #file(GLOB sourceFILES *.cpp *.c *.hpp)
 #FOREACH (sourceFile ${sourceFILES})

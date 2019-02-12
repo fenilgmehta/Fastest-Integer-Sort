@@ -24,8 +24,8 @@
 #include <boost/sort/sort.hpp>
 #include <boost/sort/spreadsort/float_sort.hpp>
 
-#include "../src/integer_sort.cpp"
-#include "../references/NewRadixGitBoost.h"
+#include "../src/integer_sort.hpp"
+#include "../references/ska_sort.hpp"
 
 //#################################################
 using namespace std;
@@ -315,7 +315,7 @@ int32_t main() {
 
             startTime
             // ska_sort(begin(arr), end(arr), [](myClassInt &a){return a.classGetIndex();});
-            boost::sort::spreadsort::integer_sort(begin(arr), end(arr), [](const ArrayDataType& a, const int& val){return a.classGetIndex() >> val;});
+            // boost::sort::spreadsort::integer_sort(begin(arr), end(arr), [](const ArrayDataType& a, const int& val){return a.classGetIndex() >> val;});
             std::sort(begin(arr), end(arr), [](ArrayDataType &a , ArrayDataType &b){return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::pdqsort(begin(arr), end(arr), [](ArrayDataType &a, ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::spinsort(begin(arr), end(arr), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});

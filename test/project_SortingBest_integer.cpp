@@ -1,4 +1,6 @@
 #pragma clang diagnostic push
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-redundant-expression"
 #pragma clang diagnostic ignored "-Wfor-loop-analysis"
 #pragma ide diagnostic ignored "google-explicit-constructor"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
@@ -9,10 +11,13 @@
 
 #include <bits/stdc++.h>
 #include <boost/sort/sort.hpp>
+#include <boost/sort/common/file_vector.hpp>
 
-#include "../src/integer_sort.cpp"
-#include "../references/NewRadixGit.h"
-#include "../references/NewRadixGitBoost.h"
+#include "../src/integer_sort.hpp"
+#include "../references/kxsort.h"
+#include "../references/ska_sort.hpp"
+
+#include <unistd.h>
 
 // #include <iostream>
 // #include <cstdint>
@@ -73,13 +78,13 @@ const int32_t columnWidth = 15;
  * global_onlyPositiveNumbers = 2;      // -ve numbers
  *
  * */
-#define settings_onlyPositiveNumbers 0
+#define settings_onlyPositiveNumbers 1
 
 /*
  * Number of bits to be used
  *
  * */
-const int32_t myBits = 62;
+int32_t myBits = 24;
 
 /*
  * Select the datatype of the array to be used for testing
@@ -88,8 +93,8 @@ const int32_t myBits = 62;
 // using ArrayDataType = int8_t;
 // using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
-using ArrayDataType = int64_t;
-using ArrayIndexType = ArrayDataType ;
+// using ArrayDataType = int64_t;
+using ArrayDataType = uint64_t;
 
 // ###################################################
 // ################### SETTINGS end ##################
@@ -161,13 +166,13 @@ void printArray(T &arr, int64_t low, int64_t high) {
     cout << endl;
 }
 
-template<typename T>
-void fillRandArray(T &arr, const int64_t &low, const int64_t &high, const int64_t &randStart, const int64_t &randEnd) {
+template<typename RandomAccessIterator>
+void fillRandArray(RandomAccessIterator first, RandomAccessIterator last, const ArrayDataType randStart, const ArrayDataType randEnd) {
     std::random_device rd;
     std::mt19937_64 gen(rd());
-    std::uniform_int_distribution<ArrayIndexType> dis(randStart, randEnd);
+    std::uniform_int_distribution<ArrayDataType> dis(randStart, randEnd);
 
-    for (int64_t i = low; i <= high; i++) arr[i] = dis(gen);
+    for(; first != last; ++first) (*first) = dis(gen);
 }
 
 //#########################################################################################################################################
@@ -191,10 +196,18 @@ inline ArrayDataType valueReturn(ArrayDataType &a){
 }
 
 int32_t main() {
-    ios_base::sync_with_stdio(false);
+    // vector<uint64_t> file_arr(120000000);
+    // fillRandArray(begin(file_arr), end(file_arr), 0, 18446744073709551615ull);
+    // boost::sort::common::write_file_uint64(file_arr, "input.bin");
+    // return 0;
 
+    // vector<uint64_t> aaa(10);
+    // fillRandArray(m_ALL(aaa), 0, 20);
+    // fm_sort::fm_sort(m_ALL(aaa));
+
+    ios_base::sync_with_stdio(false);
     int32_t setwLen = 11, setwLenRatio = 11;
-    long double irSortRatio = 0, stdSortRatio = 0;
+    long double sort1Ratio = 0, sort2Ratio = 0;
     cout << setprecision(13);
 
     auto start = high_resolution_clock::now(); // Get starting time
@@ -202,8 +215,8 @@ int32_t main() {
     nanoseconds duration; // Get duration. Subtract start time point to get duration. To cast it to proper unit use duration cast method
 
     int64_t minArrayLength = 0, maxArrayLength = 0, testCases = 0;
-    cout << "Input: (minArrayLength, maxArrayLength, testCases) = ";
-    cin >> minArrayLength >> maxArrayLength >> testCases;
+    cout << "Input: (minArrayLength, maxArrayLength, testCases, bits) = ";
+    cin >> minArrayLength >> maxArrayLength >> testCases >> myBits;
     cout << endl;
 
     if (minArrayLength > maxArrayLength) {
@@ -213,7 +226,7 @@ int32_t main() {
 
     // ARRAY
     // arr: used to check sorting time, it will get the values from the baseArray
-    // baseArray: used to store the random array generated for each testcase
+    // baseArray: used to store the random array generated for each test-case
     vector<ArrayDataType> arr(static_cast<unsigned long>(maxArrayLength));
     vector<ArrayDataType> baseArray(static_cast<unsigned long>(maxArrayLength));
 
@@ -222,62 +235,76 @@ int32_t main() {
         db1(arrayLength)
         db1(testCases)
 
-        irSortRatio = 0, stdSortRatio = 0;
+        sort1Ratio = 0, sort2Ratio = 0;
 
         int64_t timeArrLength = 2;
-        deque<int64_t> timeArr(static_cast<unsigned long>(timeArrLength), 0);             // used to store the time taken for a particular sorting technique
-        deque<int64_t> bestThreshold(static_cast<unsigned long>(timeArrLength), 0);       // used to keep track of the best THRESHOLD
-
-
+        vector<int64_t> timeArr(static_cast<unsigned long>(timeArrLength), 0);       // used to store the time taken for a particular sorting technique
+        vector<int64_t> bestThreshold(static_cast<unsigned long>(timeArrLength), 0); // used to keep track of the best THRESHOLD
 
         if(settings_PRINT_TIME_COMPARISON){
-            cout << "\n\nTime taken in nano-seconds, Time ratio with respect to ir_sort";
+            cout << "\n\nTime taken in nano-seconds, Time ratio with respect to sort1";
             cout << endl << left
-                 << setw(setwLen) << "ir_sort" << "\t," << setw(setwLen) << "std::sort" << "\t,"
-                 << setw(setwLenRatio) << "ratio ir_sort" << "\t," << setw(setwLenRatio) << "ratio std::sort";
+                 << setw(setwLen) << "sort1" << "\t," << setw(setwLen) << "sort2" << "\t,"
+                 << setw(setwLenRatio) << "ratio sort1" << "\t," << setw(setwLenRatio) << "ratio sort2";
         }
 
         rangeup(__, 0, testCases) {
+            // index to insert data in timeArr
+            int64_t timeArrIndex = 0;
             int64_t myTempLow = 0, myTempHigh = arrayLength - 1;
 
             // Fill up the array
             {
-                if (settings_onlyPositiveNumbers == 0)
-                    fillRandArray(baseArray, 0, arrayLength - 1, (-(1LL << myBits)) + 1, (1LL << myBits) - 1);
-                else if (settings_onlyPositiveNumbers == 1)
-                    fillRandArray(baseArray, 0, arrayLength - 1, 0, (1LL << myBits) - 1);
-                else
-                    fillRandArray(baseArray, 0, arrayLength - 1, (-(1LL << myBits)) + 1, -1);
-                // iota(&baseArray[0],&baseArray[arrayLength-1],1);
+                // if (settings_onlyPositiveNumbers == 0)
+                //     fillRandArray(m_ALL(baseArray), (-(1LL << myBits)) + 1, (1LL << myBits) - 1);
+                // else if (settings_onlyPositiveNumbers == 1)
+                //     fillRandArray(m_ALL(baseArray), 0, (1LL << myBits) - 1);
+                // else
+                //     fillRandArray(m_ALL(baseArray), (-(1LL << myBits)) + 1, -1);
+
+                fillRandArray(m_ALL(baseArray), 0, static_cast<const ArrayDataType>((((1uLL << (myBits - 1)) - 1) << 1) + 1));
+
+                // sort(m_ALL(baseArray));
+                // sort(m_ALL(arr));
+                // baseArray[baseArray.size() / 2] = -10000000;
             }
 
-            // index to insert data in timeArr
-            int64_t timeArrIndex = 0;
-
             m_START_TIME
-            ArrayDataType *buffer = new ArrayDataType[maxArrayLength];
-            detail::SizedRadixSorter<8>::sort(m_ALL(arr), buffer, [](ArrayDataType &a){return a;});
-            delete[] buffer;
+            ir_sort::stable_integer_sort_new(m_ALL(arr), 0);
             // ir_sort::integer_sort(m_ALL(arr), true);
-            // ir_sort::stable_integer_sort_new(m_ALL(arr), true);
+            // sort(m_ALL(arr));
+            // ska_sort(m_ALL(arr));
+            // boost::sort::spreadsort::integer_sort(m_ALL(arr));   // BEST for 1000 <= size < 55000
+            // boost::sort::pdqsort(m_ALL(arr));                    // good for size < 1000
             // kx::radix_sort(m_ALL(arr)); // GREAT from 90 to 3000 // this is NOT stable sorting
+            // OTHER
+            // ArrayDataType *buffer = new ArrayDataType[maxArrayLength];
+            // detail::SizedRadixSorter<8>::sort(m_ALL(arr), buffer, [](ArrayDataType &a){return a;});
+            // delete[] buffer;
             m_END_TIME
             timeArr[timeArrIndex++] = duration.count();
             if (!isSorted(m_ALL(arr))) cerr << endl << "ERROR: array1 not sorted :(";
             // printArray(arr, myTempLow, myTempHigh);
 
             m_START_TIME_ONLY
-            ir_sort::integer_sort(m_ALL(baseArray), true, 3);
-            // ska_sort(m_ALL(baseArray));
-            // kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
+            fm_sort::fm_sort(m_ALL(baseArray));
+/*            ArrayDataType mid_element_arr[5] = {baseArray[0], baseArray[maxArrayLength >> 2], baseArray[maxArrayLength>>1], baseArray[maxArrayLength - (maxArrayLength>>2)], baseArray[maxArrayLength-1]};
+            ir_sort::basic_sorts::insertion_sort_basic_asc<decltype(begin(baseArray)),ArrayDataType>(begin(baseArray), 0, 4);
+            ArrayDataType mid_element = mid_element_arr[2];
+
+            auto first_part_two = std::partition(m_ALL(baseArray), [mid_element](const ArrayDataType &key1){return key1 < mid_element;});
+            ir_sort::stable_integer_sort_new(begin(baseArray), first_part_two);
+            ir_sort::stable_integer_sort_new(first_part_two, end(baseArray));*/
+
+            // ir_sort::stable_integer_sort_new(m_ALL(baseArray), 1);
+            // ir_sort::integer_sort(m_ALL(baseArray), true, 3);
             // sort(m_ALL(baseArray));
-            // boost::sort::spreadsort::integer_sort(m_ALL(baseArray)); // BEST for 1000 <= size < 55000
-            // boost::sort::pdqsort(m_ALL(baseArray)); // good for size < 1000
+            // ska_sort(m_ALL(baseArray));
+            // boost::sort::spreadsort::integer_sort(m_ALL(baseArray));     // BEST for 1000 <= size < 55000
+            // boost::sort::pdqsort(m_ALL(baseArray));                      // good for size < 1000
+            // kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
             m_END_TIME
             timeArr[timeArrIndex] = duration.count();
-            // checkSortingRange_asc(baseArray, myTempLow, myTempHigh)
-            // checkSortingRange_desc(baseArray, myTempLow, myTempHigh)
-            // if (!isSorted(&arr[0], myTempLow, myTempHigh)) cout << endl << "ERROR: array not sorted :(";
             if (!isSorted(m_ALL(baseArray))) cerr << endl << "ERROR: array2 not sorted :(";
             // printArray(arr, myTempLow, myTempHigh);
 
@@ -286,8 +313,8 @@ int32_t main() {
                      << setw(setwLenRatio) << timeArr[0] / timeArr[0] << "\t,"
                      << setw(setwLenRatio) << ((1.0 * timeArr[1]) / timeArr[0]);
             }
-            irSortRatio += (timeArr[0] / timeArr[0]);
-            stdSortRatio += (((1.0 * timeArr[1]) / timeArr[0]));
+            sort1Ratio += (timeArr[0] / timeArr[0]);
+            sort2Ratio += (((1.0 * timeArr[1]) / timeArr[0]));
 
             if (!compareArray(begin(arr)+myTempLow, begin(arr)+myTempHigh+1, begin(baseArray))) { db1(__) };
 
@@ -300,12 +327,12 @@ int32_t main() {
         int64_t maxSpeedIndex = maxIndex(bestThreshold, timeArrLength);
         db1(bestThreshold[maxSpeedIndex])         // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
 
-        if (maxSpeedIndex == 0) cout << "\n\nir_sort is faster than std::sort ";
-        else cout << "\n\nstd::sort is faster than ir_sort ";
+        if (maxSpeedIndex == 0) cout << "\n\nsort1 is faster than sort2 ";
+        else cout << "\n\nsort2 is faster than sort1";
         cout << (bestThreshold[maxSpeedIndex] * 100.0 / testCases) << " % times, for testCases = " << testCases << endl;
 
-        cout << "\nir_sort average speed ratio = " << irSortRatio / testCases;
-        cout << "\nstd::sort average speed ratio = " << stdSortRatio / testCases;
+        cout << "\nsort1 average speed ratio = " << sort1Ratio / testCases;
+        cout << "\nsort2 average speed ratio = " << sort2Ratio / testCases;
 
         cout << endl << endl;
     }
@@ -313,3 +340,4 @@ int32_t main() {
     return 0;
 }
 
+#pragma clang diagnostic pop

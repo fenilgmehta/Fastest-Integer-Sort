@@ -10,7 +10,7 @@
 #include <bits/stdc++.h>
 #include <boost/sort/sort.hpp>
 #include <boost/sort/spreadsort/float_sort.hpp>
-#include "../references/NewRadixGitBoost.h"
+#include "../references/ska_sort.hpp"
 
 // #include <iostream>
 // #include <cstdint>
@@ -24,7 +24,7 @@
 
 // #include <type_traits>
 
-#include "../src/integer_sort.cpp"
+#include "../src/integer_sort.hpp"
 
 //#################################################
 using namespace std;

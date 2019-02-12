@@ -13,8 +13,8 @@ namespace ir_sort {
 //                                                                          ##
 //############################################################################
 
-        int_fast32_t INSERTION_SORT_THRESHOLD = 30; // 25
-        int_fast32_t MERGE_SORT_THRESHOLD = 29;     // 135
+        int_fast32_t INSERTION_SORT_THRESHOLD = 30;  // 25
+        int_fast32_t MERGE_SORT_THRESHOLD = 256;     // 135
 
         // insertion_sort threshold in merge_sort
         // 0 to 1360

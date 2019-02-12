@@ -61,7 +61,7 @@ Usage
 ----------------------------------
 For projects:
 ```
-// copy the following four files to the project folder: "basic_sorts.hpp", "integer_sort.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
+// copy the following four files to the project folder: "basic_sorts.hpp", "ir_commons.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
 
 // paste the following lines in the file start
 include "integer_sort.cpp"

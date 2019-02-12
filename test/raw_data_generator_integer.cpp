@@ -23,7 +23,7 @@
 
 // #include <type_traits>
 
-#include "../src/integer_sort.cpp"
+#include "../src/integer_sort.hpp"
 
 //#################################################
 using namespace std;
