@@ -264,13 +264,13 @@ int32_t main() {
 
                 fillRandArray(m_ALL(baseArray), 0, static_cast<const ArrayDataType>((((1uLL << (myBits - 1)) - 1) << 1) + 1));
 
-                // sort(m_ALL(baseArray));
-                // sort(m_ALL(arr));
+                sort(m_ALL(baseArray));
+                sort(m_ALL(arr));
                 // baseArray[baseArray.size() / 2] = -10000000;
             }
 
             m_START_TIME
-            ir_sort::stable_integer_sort_new(m_ALL(arr), 0);
+            ir_sort::integer_sort_stable(m_ALL(arr), 0);
             // ir_sort::integer_sort(m_ALL(arr), true);
             // sort(m_ALL(arr));
             // ska_sort(m_ALL(arr));
@@ -293,10 +293,10 @@ int32_t main() {
             ArrayDataType mid_element = mid_element_arr[2];
 
             auto first_part_two = std::partition(m_ALL(baseArray), [mid_element](const ArrayDataType &key1){return key1 < mid_element;});
-            ir_sort::stable_integer_sort_new(begin(baseArray), first_part_two);
-            ir_sort::stable_integer_sort_new(first_part_two, end(baseArray));*/
+            ir_sort::integer_sort_stable(begin(baseArray), first_part_two);
+            ir_sort::integer_sort_stable(first_part_two, end(baseArray));*/
 
-            // ir_sort::stable_integer_sort_new(m_ALL(baseArray), 1);
+            // ir_sort::integer_sort_stable(m_ALL(baseArray), 1);
             // ir_sort::integer_sort(m_ALL(baseArray), true, 3);
             // sort(m_ALL(baseArray));
             // ska_sort(m_ALL(baseArray));

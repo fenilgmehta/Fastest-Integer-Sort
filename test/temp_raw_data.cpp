@@ -233,7 +233,7 @@ int32_t main() {
 
         m_START_TIME
         // ir_sort::integer_sort(m_ALL(arr), true);
-        ir_sort::stable_integer_sort_new(m_ALL(arr), true, 3); // better
+        ir_sort::integer_sort_stable(m_ALL(arr), true, 3); // better
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";

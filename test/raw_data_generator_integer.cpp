@@ -77,7 +77,7 @@ const int32_t columnWidth = 15;
  * Number of bits to be used
  *
  * */
-const int32_t myBits = 7;
+const int32_t myBits = 63;
 
 /*
  * Select the datatype of the array to be used for testing
@@ -86,7 +86,8 @@ const int32_t myBits = 7;
 // using ArrayDataType = int8_t;
 // using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
-using ArrayDataType = int64_t;
+// using ArrayDataType = int64_t;
+using ArrayDataType = uint64_t;
 using ArrayIndexType = ArrayDataType;
 
 // ###################################################
@@ -218,18 +219,18 @@ int32_t main() {
         // Fill up the array
         {
             if (settings_onlyPositiveNumbers == 0)
-                fillRandArray(baseArray, 0, arrayLength - 1, (-(1LL << myBits)) + 1, (1LL << myBits) - 1);
+                fillRandArray(baseArray, 0, arrayLength - 1, (-(1uLL << myBits)) + 1, (1uLL << myBits) - 1);
             else if (settings_onlyPositiveNumbers == 1)
-                fillRandArray(baseArray, 0, arrayLength - 1, 0, (1LL << myBits) - 1);
+                fillRandArray(baseArray, 0, arrayLength - 1, 0, (1uLL << myBits) - 1);
             else
-                fillRandArray(baseArray, 0, arrayLength - 1, (-(1LL << myBits)) + 1, -1);
+                fillRandArray(baseArray, 0, arrayLength - 1, (-(1uLL << myBits)) + 1, -1);
         }
 
         // index to insert data in timeArr
         int64_t timeArrIndex = 0;
 
         m_START_TIME
-        ir_sort::integer_sort(m_ALL(arr), true);
+        ir_sort::integer_sort_stable(m_ALL(arr), true);
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";

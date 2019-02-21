@@ -16,9 +16,9 @@ namespace ir_sort {
 //                                                                                       ##
 //#########################################################################################
 
-        template<typename ArrayIndexType, typename ArrayValueType, typename ArrayPointerType, typename myGetIndex>
+        template<typename RandomAccessIterator, typename ArrayIndexType, typename ArrayValueType, typename myGetIndex>
         inline void
-        countingSort_asc_object(ArrayPointerType arr, const int_fast64_t low, int_fast64_t high, const int_fast64_t sortArrayLength,
+        countingSort_asc_object(RandomAccessIterator arr, const int_fast64_t low, int_fast64_t high, const int_fast64_t sortArrayLength,
                                 const ArrayIndexType &arrMaxElement, const ArrayIndexType &arrMinElement, myGetIndex getIndex) {
             // NOTE: This is the modified version created by me so that it works for negative numbers too.
             //       This sorting algorithm is not valid for negative numbers, however I have modified it
@@ -125,18 +125,18 @@ namespace ir_sort {
 
 
         // Sorts the +ve numbers in ascending order
-        template<typename ArrayValueType, typename ArrayPointerType, typename myGetIndex>
+        template<typename RandomAccessIterator, typename ArrayValueType, typename myGetIndex>
         inline void
-        radixSort_Positive_asc(ArrayPointerType arr, const int_fast64_t low, int_fast64_t high,
+        radixSort_Positive_asc(RandomAccessIterator arr, const int_fast64_t low, int_fast64_t high,
                                const int_fast64_t sortArrayLength, const int_fast16_t &bits_arrMaxElement, myGetIndex getIndex) {
             if (low >= high) return;
 
             // SUBORDINATE VARIABLES
             // ArrayValueType copyArray[sortArrayLength];              // this "array" is used to store the partially sorted array       // stack memory overflow
-            // std::vector<ArrayValueType> copyArray(sortArrayLength); // this "vector" is used to store the partially sorted array      // SLOW
-            auto *copyArray = new ArrayValueType[sortArrayLength];     // this dynamic array is used to store the partially sorted array // FAST and reliable
-            ArrayValueType *p_arr = &arr[low];
-            ArrayValueType *p_copyArray = &copyArray[0];
+            std::vector<ArrayValueType> copyArray(sortArrayLength); // this "vector" is used to store the partially sorted array      // SLOW
+            // auto *copyArray = new ArrayValueType[sortArrayLength];     // this dynamic array is used to store the partially sorted array // FAST and reliable
+            RandomAccessIterator p_arr = arr;
+            RandomAccessIterator p_copyArray = copyArray.begin();
             high -= low;
 
             // REQUIRED VARIABLES
@@ -181,7 +181,7 @@ namespace ir_sort {
                 // AFTER swapping,
                 //      "p_arr" would point to the old and un-updated array
                 //      "p_copyArray" would be storing the reference to the array sorted in the last pass
-                std::swap<ArrayValueType *>(p_arr, p_copyArray);
+                std::swap<RandomAccessIterator>(p_arr, p_copyArray);
 
                 // this for loop is used to insert the elements of "p_copyArray" into "p_arr" in sorted
                 // order of the column being scanned of the original array
@@ -194,7 +194,7 @@ namespace ir_sort {
             }
 
             // the sorted arrays is copied into the original input array if the final sorted output is in "copyArray"
-            if ((&arr[low]) != p_arr) {
+            if (arr != p_arr) {
                 // copy(p_arr, p_arr + sortArrayLength, arr + low);
                 // copy(p_arr, p_arr + sortArrayLength, p_copyArray);
                 for (i = 0; i < sortArrayLength; i++) {
@@ -202,22 +202,22 @@ namespace ir_sort {
                 }
             }
 
-            delete[] copyArray;
+            // delete[] copyArray;
         }
 
         // Sorts the +ve and -ve numbers in ascending order
-        template<typename ArrayValueType, typename ArrayPointerType, typename myGetIndex>
+        template<typename RandomAccessIterator, typename ArrayValueType, typename myGetIndex>
         inline void
-        radixSort_asc(ArrayPointerType arr, const int_fast64_t low, int_fast64_t high,
+        radixSort_asc(RandomAccessIterator arr, const int_fast64_t low, int_fast64_t high,
                       const int_fast64_t sortArrayLength, const int_fast16_t &maxBits, myGetIndex getIndex) {
             if (low >= high) return;
 
             // SUBORDINATE VARIABLES
             // ArrayValueType copyArray[sortArrayLength];              // this "array" is used to store the partially sorted array       // stack memory overflow
-            // std::vector<ArrayValueType> copyArray(sortArrayLength); // this "vector" is used to store the partially sorted array      // SLOW
-            auto *copyArray = new ArrayValueType[sortArrayLength];     // this dynamic array is used to store the partially sorted array // FAST and reliable
-            ArrayValueType *p_arr = &arr[low];
-            ArrayValueType *p_copyArray = &copyArray[0];
+            std::vector<ArrayValueType> copyArray(sortArrayLength); // this "vector" is used to store the partially sorted array      // SLOW
+            // auto *copyArray = new ArrayValueType[sortArrayLength];     // this dynamic array is used to store the partially sorted array // FAST and reliable
+            RandomAccessIterator p_arr = arr;
+            RandomAccessIterator p_copyArray = copyArray.begin();
             high -= low;
 
             // REQUIRED VARIABLES
@@ -262,7 +262,7 @@ namespace ir_sort {
                 // AFTER swapping,
                 //      "p_arr" would point to the old and un-updated array
                 //      "p_copyArray" would be storing the reference to the array sorted in the last pass
-                std::swap<ArrayValueType *>(p_arr, p_copyArray);
+                std::swap<RandomAccessIterator>(p_arr, p_copyArray);
 
                 // this for loop is used to insert the elements of "p_copyArray" into "p_arr" in sorted
                 // order of the column being scanned of the original array
@@ -288,13 +288,13 @@ namespace ir_sort {
             if (binarySearch_low + 1 <= high) while (getIndex(p_arr[binarySearch_low + 1]) >= 0) binarySearch_low++;
             if (binarySearch_low - 1 >= 0) while (getIndex(p_arr[binarySearch_low - 1]) < 0) binarySearch_low--;
 
-            std::swap<ArrayValueType *>(p_arr, p_copyArray);
+            std::swap<RandomAccessIterator>(p_arr, p_copyArray);
             for (i = 0, j = binarySearch_low; j <= high;) p_arr[i++] = p_copyArray[j++];
             for (j = 0; j < binarySearch_low;) p_arr[i++] = p_copyArray[j++];
             // ##### NEW END #####
 
             // the sorted arrays is copied into the original input array if the final sorted output is in "copyArray"
-            if ((&arr[low]) != p_arr) {
+            if (arr != p_arr) {
                 // copy(p_arr, p_arr + sortArrayLength, arr + low);
                 // copy(p_arr, p_arr + sortArrayLength, p_copyArray);
                 for (i = 0; i < sortArrayLength; i++) {
@@ -302,7 +302,7 @@ namespace ir_sort {
                 }
             }
 
-            delete[] copyArray;
+            // delete[] copyArray;
         }
 
 //#########################################################################################
@@ -511,8 +511,8 @@ namespace ir_sort {
         // template<typename ArrayElementType, typename T>
         template<typename RandomAccessIterator, typename myGetIndex>
         inline void
-        integer_sort_small_obj(RandomAccessIterator &arr, const int_fast64_t low, const int_fast64_t high, myGetIndex getIndex, bool &ascendingOrder,
-                               int_fast16_t &forceLinearSort) {
+        integer_sort_small_obj(RandomAccessIterator arr, const int_fast64_t low, const int_fast64_t high,
+                                myGetIndex getIndex, int_fast16_t &forceLinearSort) {
             /* ### PARAMETERS
              * arr: the array to be sorted(values from [low, high] will be sorted)
              * low: the lower index for sorting
@@ -533,15 +533,7 @@ namespace ir_sort {
             using ArrayIndexType = decltype(getIndex(arr[0]));
             // using ArrayIndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
 
-            ArrayPointerType p_arr = &arr[0];
-            if ((&arr[1]) != ((&arr[0]) + 1)) {
-                // the given parameter "arr" is a reverse iterator
-                p_arr = &arr[high];
-                ascendingOrder = (!ascendingOrder);
-            }
-
             const int_fast64_t sortArrayLength = high - low + 1;
-
 
             // ==========================================================
             // TODO, change the THRESHOLDS for objects
@@ -552,13 +544,11 @@ namespace ir_sort {
                 ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 0;
             } else if (forceLinearSort == -1) {
                 // FORCE merge_sort
-                if (ascendingOrder) ir_sort::basic_sorts::merge_sort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
-                else ir_sort::basic_sorts::merge_sort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
+                ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
                 return;
             } else if (forceLinearSort == -2) {
                 // FORCE insertion_sort
-                if (ascendingOrder) ir_sort::basic_sorts::insertion_sort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
-                else ir_sort::basic_sorts::insertion_sort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
+                ir_sort::basic_sorts::insertion_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
                 return;
             } else {
                 // dynamically choose the sort
@@ -575,8 +565,7 @@ namespace ir_sort {
             // ==========================================================
             // merge_sort
             if (sortArrayLength < ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                if (ascendingOrder) ir_sort::basic_sorts::merge_sort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
-                else ir_sort::basic_sorts::merge_sort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
+                ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
                 return;
             }
 
@@ -584,23 +573,19 @@ namespace ir_sort {
             // ==========================================================
             // arrMaxElement: largest element in "arr"
             // arrMinElement: smallest element in "arr"
-            ArrayIndexType arrMaxElement = getIndex(p_arr[high]), arrMinElement = getIndex(p_arr[high]);
+            ArrayIndexType arrMaxElement = getIndex(arr[high]), arrMinElement = getIndex(arr[high]);
 
             // this for loop is used to FIND THE MAXIMUM and MINIMUM of all the elements in the given array/RandomAccessIterator
             for (int_fast64_t i = low; i < high; i++) {
-                if (getIndex(p_arr[i]) > arrMaxElement) arrMaxElement = getIndex(p_arr[i]);
-                else if (getIndex(p_arr[i]) < arrMinElement) arrMinElement = getIndex(p_arr[i]);
+                if (getIndex(arr[i]) > arrMaxElement) arrMaxElement = getIndex(arr[i]);
+                else if (getIndex(arr[i]) < arrMinElement) arrMinElement = getIndex(arr[i]);
             }
 
 
             // counting sort
             if ((1.0 * sortArrayLength) / (arrMaxElement - arrMinElement) > 0.71 || forceLinearSort == 2) {
-                if (ascendingOrder)
-                    countingSort_asc_object<ArrayIndexType, ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, arrMaxElement, arrMinElement,
-                                                                                             getIndex);
-                else
-                    countingSort_desc_object<ArrayIndexType, ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, arrMaxElement, arrMinElement,
-                                                                                              getIndex);
+                countingSort_asc_object<RandomAccessIterator, ArrayIndexType, ArrayValueType, myGetIndex>
+                        (arr, low, high, sortArrayLength, arrMaxElement, arrMinElement, getIndex);
                 return;
             }
 
@@ -651,43 +636,23 @@ namespace ir_sort {
             switch (onlyPositiveNumbers) {
                 case 0:
                     // +ve and -ve number to be sorted
-                    if (ascendingOrder) {
                         if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
+                            ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
                             return;
                         } else {
-                            radixSort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
+                            radixSort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
                             return;
                         }
-                    } else {
-                        if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
-                            return;
-                        } else {
-                            radixSort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
-                            return;
-                        }
-                    }
                 default:
                     // +ve numbers ONLY
                     // -ve numbers ONLY
-                    if (ascendingOrder) {
                         if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
+                            ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
                             return;
                         } else {
-                            radixSort_Positive_asc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
+                            radixSort_Positive_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
                             return;
                         }
-                    } else {
-                        if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, getIndex);
-                            return;
-                        } else {
-                            radixSort_Positive_desc<ArrayValueType, ArrayPointerType, myGetIndex>(p_arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
-                            return;
-                        }
-                    }
             }
         }
 
@@ -696,7 +661,7 @@ namespace ir_sort {
     // this function call has parameters similar to std::sort
     template<typename RandomAccessIterator, typename myGetIndex>
     inline void
-    integer_sort_small_obj(RandomAccessIterator start, RandomAccessIterator end, myGetIndex getIndex, bool ascendingOrder = true, int_fast16_t forceLinearSort = 0) {
+    integer_sort_small_obj(RandomAccessIterator start, RandomAccessIterator end, myGetIndex getIndex, int_fast16_t forceLinearSort = 0) {
         // return if RandomAccessIterator is not a random_access_iterator
         if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) != typeid(std::random_access_iterator_tag))
             return;
@@ -705,7 +670,7 @@ namespace ir_sort {
         if (! std::is_integral<decltype(getIndex(start[0]))>::value)
             return;
 
-        object_integer_sort_functions::integer_sort_small_obj<RandomAccessIterator, myGetIndex>(start, 0, end - start - 1, getIndex, ascendingOrder, forceLinearSort);
+        object_integer_sort_functions::integer_sort_small_obj<RandomAccessIterator, myGetIndex>(start, 0, end - start - 1, getIndex, forceLinearSort);
     }
 
 } // namespace ir_sort
