@@ -1,23 +1,19 @@
 #ifndef IR_SORT_CPP
 #define IR_SORT_CPP
 
-// TESTING
-#include <iostream>
-#include <boost/sort/pdqsort/pdqsort.hpp>
-#include <boost/sort/spreadsort/integer_sort.hpp>
+// TESTING HEADERS START
+// #include <iostream>
+// #include <boost/sort/spreadsort/integer_sort.hpp>
 // TESTING HEADERS END
 
 #include <cstdint>
 #include <numeric>
-#include <iterator>
-#include <cmath>
-#include <algorithm>
 #include <vector>
+// #include <iterator>
 
 #include <boost/sort/pdqsort/pdqsort.hpp>
 
 #include "ir_commons.hpp"
-#include "basic_sorts.hpp"
 
 namespace ir_sort {
     namespace parameter {
@@ -59,17 +55,22 @@ namespace ir_sort {
         inline void reset_box1() {
             for (auto &i: box1) i = 0;
         }
+
         inline void reset_box2() {
-            for(int i = 0; i < 256; ++i) box1[i] = box2[i] = 0;
+            for (int i = 0; i < 256; ++i) box1[i] = box2[i] = 0;
         }
+
         inline void reset_box4() {
-            for(int i = 0; i < 256; ++i) box1[i] = box2[i] = box3[i] = box4[i] = 0;
+            for (int i = 0; i < 256; ++i) box1[i] = box2[i] = box3[i] = box4[i] = 0;
         }
+
         inline void reset_box6() {
-            for(int i = 0; i < 256; ++i) box1[i] = box2[i] = box3[i] = box4[i] = box5[i] = box6[i] = 0;
+            for (int i = 0; i < 256; ++i) box1[i] = box2[i] = box3[i] = box4[i] = box5[i] = box6[i] = 0;
         }
+
         inline void reset_box8() {
-            for(int i = 0; i < 256; ++i) box1[i] = box2[i] = box3[i] = box4[i] = box5[i] = box6[i]  = box7[i] = box8[i] = 0;
+            for (int i = 0; i < 256; ++i)
+                box1[i] = box2[i] = box3[i] = box4[i] = box5[i] = box6[i] = box7[i] = box8[i] = 0;
         }
 
         /*
@@ -93,21 +94,21 @@ namespace ir_sort {
         }
     };
 
-    namespace key_functions{
+    namespace key_functions {
         int_fast32_t size;
 
         template<typename T>
-        inline void set_size(){
+        inline void set_size() {
             size = sizeof(T);
         }
 
         template<typename T>
-        inline T get_unsigned_key(const T& key){
+        inline T get_unsigned_key(const T &key) {
             return key;
         }
 
         template<typename T>
-        inline T get_signed_key(const T& key){
+        inline T get_signed_key(const T &key) {
             return (key ^ (128 << ((size - 1) << 3)));
         }
     }
@@ -139,7 +140,7 @@ namespace ir_sort {
 
             // This for loop is used to increment the value of the i positioned element of the
             // counting array(+ve and -ve) to say that the element is present in that quantity
-            for(auto key = first_arr; key != last_arr; ++key){
+            for (auto key = first_arr; key != last_arr; ++key) {
                 ++box[(*key) - arrMinElement];
             }
 
@@ -195,35 +196,43 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box3[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box3[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box4[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box4[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box5[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box5[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box6[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box6[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box7[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box7[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box8[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box8[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
         }
@@ -253,19 +262,23 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box3[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box3[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box4[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box4[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
         }
@@ -291,11 +304,13 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
             parameter::update_initial_bits_shift(8);
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_buffer[i]);
+                start_arr[--parameter::box2[(start_buffer[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_buffer[i]);
             }
             parameter::update_initial_bits_shift(8);
 
@@ -319,7 +334,8 @@ namespace ir_sort {
             // this for loop is used to insert the elements of "start_arr" into "start_buffer" in sorted
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
-                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(start_arr[i]);
+                start_buffer[--parameter::box1[(start_arr[i] >> parameter::initial_bits_shift) & 255]] = std::move(
+                        start_arr[i]);
             }
 
             parameter::update_initial_bits_shift(8);
@@ -345,7 +361,7 @@ namespace ir_sort {
             // order of the column being scanned of the original array
             for (int_fast32_t i = parameter::length - 1; i >= 0; --i) {
                 start_buffer[--parameter::box1[((start_arr[i] >> parameter::initial_bits_shift) ^ 128) &
-                                              255]] = std::move(start_arr[i]);
+                                               255]] = std::move(start_arr[i]);
             }
 
             parameter::update_initial_bits_shift(8);
@@ -357,17 +373,17 @@ namespace ir_sort {
             key_functions::set_size<ArrayValueType>();
 
             int_fast32_t i = 1;
-            while ((i+8) <= parameter::iterations_required) {
+            while ((i + 8) <= parameter::iterations_required) {
                 partial_radix_sort_asc8(start_arr, buffer);
-                i+=8;
+                i += 8;
             }
-            while ((i+4) <= parameter::iterations_required) {
+            while ((i + 4) <= parameter::iterations_required) {
                 partial_radix_sort_asc4(start_arr, buffer);
-                i+=4;
+                i += 4;
             }
-            while ((i+2) <= parameter::iterations_required) {
+            while ((i + 2) <= parameter::iterations_required) {
                 partial_radix_sort_asc2(start_arr, buffer);
-                i+=2;
+                i += 2;
             }
             while (i < parameter::iterations_required) {
                 partial_radix_sort_asc1(start_arr, buffer);
@@ -408,17 +424,17 @@ namespace ir_sort {
             key_functions::set_size<ArrayValueType>();
 
             int_fast32_t i = 0;
-            while ((i+8) <= parameter::iterations_required) {
+            while ((i + 8) <= parameter::iterations_required) {
                 partial_radix_sort_asc8(start_arr, buffer);
-                i+=8;
+                i += 8;
             }
-            while ((i+4) <= parameter::iterations_required) {
+            while ((i + 4) <= parameter::iterations_required) {
                 partial_radix_sort_asc4(start_arr, buffer);
-                i+=4;
+                i += 4;
             }
-            while ((i+2) <= parameter::iterations_required) {
+            while ((i + 2) <= parameter::iterations_required) {
                 partial_radix_sort_asc2(start_arr, buffer);
-                i+=2;
+                i += 2;
             }
             while (i < parameter::iterations_required) {
                 partial_radix_sort_asc1(start_arr, buffer);
@@ -432,7 +448,7 @@ namespace ir_sort {
             // the array is a mixture of +ve and -ve numbers, then use descending order
             // for last column which contains the bit which decides the sign of a number
 
-            if(parameter::iterations_required % 2){
+            if (parameter::iterations_required % 2) {
                 std::copy(buffer, std::next(buffer, parameter::length), start_arr);
             }
         }
@@ -459,13 +475,9 @@ namespace ir_sort {
             using ArrayValueType = typename std::iterator_traits<RandomAccessIterator>::value_type;
 
             // ==========================================================
-            ir_sort::basic_sorts::INSERTION_SORT_THRESHOLD = ((parameter::length <= 1360)) ?
-                                                                ir_sort::basic_sorts::THRESHOLD_INSERTION_FOR_MERGE[parameter::length]
-                                                                : 32;
-
-            // merge_sort
-            if (parameter::length < ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                ir_sort::basic_sorts::merge_sort_basic_asc<RandomAccessIterator, ArrayValueType>(first_arr, 0, parameter::length - 1);
+            // use pdqsort if length <= 512
+            if (parameter::length < 512) {
+                boost::sort::pdqsort<RandomAccessIterator>(first_arr, last_arr);
                 return;
             }
 
@@ -481,12 +493,14 @@ namespace ir_sort {
              *              If the largest number if >= 72057594037927935, implies that bits_arrMaxElement > 56.
              *              Hence it is better to skip the for loop which is used to find arrMinElement and arrMaxElement
              * */
-            if(parameter::force_linear_sort == 1 ||
-                    (std::max(first_arr[0], std::max(first_arr[parameter::length >> 1], first_arr[parameter::length - 1])) >= 72057594037927936)){
+            if (parameter::force_linear_sort == 1 ||
+                (std::max(first_arr[0],
+                          std::max(first_arr[parameter::length >> 1], first_arr[parameter::length - 1])) >=
+                 72057594037927936)) {
                 parameter::force_linear_sort = 1; // this statement is required if the condition 2 is true
                 arrMaxElement = 1;
                 arrMinElement = (ArrayValueType(-1) > ArrayValueType(0)) ? 0 : -1;
-            } else{
+            } else {
                 // this for loop is used to FIND THE MAXIMUM and MINIMUM of all the elements in the given array with the help of RandomAccessIterator
                 for (int_fast32_t i = 1; i < parameter::length; ++i) {
                     arrMaxElement = (first_arr[i] > arrMaxElement) ? first_arr[i] : arrMaxElement;
@@ -495,7 +509,8 @@ namespace ir_sort {
 
                 // counting sort
                 if (((1.0 * parameter::length) / (arrMaxElement - arrMinElement)) > 0.71) {
-                    countingSort_asc<RandomAccessIterator, ArrayValueType>(first_arr, last_arr, arrMinElement, arrMaxElement);
+                    countingSort_asc<RandomAccessIterator, ArrayValueType>(first_arr, last_arr, arrMinElement,
+                                                                           arrMaxElement);
                     return;
                 }
             }
@@ -507,7 +522,7 @@ namespace ir_sort {
             parameter::signed_sorting = (onlyPositiveNumbers == 0);
 
             int_fast16_t bits_arrMaxElement = ir_sort::integer_sort_common::countBits(arrMaxElement),
-                         bits_arrMinElement = ir_sort::integer_sort_common::countBits(arrMinElement);
+                    bits_arrMinElement = ir_sort::integer_sort_common::countBits(arrMinElement);
 
             // IMPORTANT
             // We use bits_arrMaxElement while calling the function, hence it is updated here
@@ -523,7 +538,7 @@ namespace ir_sort {
             } else if (bits_arrMinElement == bits_arrMaxElement) ++bits_arrMaxElement;
             else if (bits_arrMinElement > bits_arrMaxElement) bits_arrMaxElement = bits_arrMinElement;
 
-            if(parameter::force_linear_sort==1){
+            if (parameter::force_linear_sort == 1) {
                 bits_arrMaxElement = sizeof(ArrayValueType) << 3;
             }
 
@@ -535,8 +550,9 @@ namespace ir_sort {
 
             parameter::set_BitShift_Iterations(bits_arrMaxElement);
 
-            if(parameter::signed_sorting) radix_sort_asc_signed<RandomAccessIterator, ArrayValueType, ArrayValueType*>(first_arr, buffer);
-            else radix_sort_asc_unsigned<RandomAccessIterator, ArrayValueType, ArrayValueType*>(first_arr, buffer);
+            if (parameter::signed_sorting)
+                radix_sort_asc_signed<RandomAccessIterator, ArrayValueType, ArrayValueType *>(first_arr, buffer);
+            else radix_sort_asc_unsigned<RandomAccessIterator, ArrayValueType, ArrayValueType *>(first_arr, buffer);
 
             delete[] buffer;
         }
@@ -564,7 +580,8 @@ namespace ir_sort {
     inline void
     integer_sort_stable(RandomAccessIterator first, RandomAccessIterator last, int_fast32_t force_linear_sort = 0) {
         // WORK: return if RandomAccessIterator is not a random_access_iterator
-        if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) != typeid(std::random_access_iterator_tag))
+        if (typeid(typename std::iterator_traits<RandomAccessIterator>::iterator_category) !=
+            typeid(std::random_access_iterator_tag))
             return;
 
         // WORK: return if the given RandomAccessIterator is not for an integer
@@ -607,7 +624,8 @@ namespace ir_sort {
         using IndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
 
         // SUBORDINATE VARIABLES
-        int_fast64_t arrMaxElement = getIndex(arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
+        int_fast64_t arrMaxElement = getIndex(
+                arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
         auto *arr_index = new IndexType[sortArrayLength];       // this array is used to store the index of partially sorted array
         auto *copyArray_index = new IndexType[sortArrayLength]; // this array is used to store the index of partially sorted array
         auto *p_arr_index = &arr_index[0];
@@ -682,13 +700,15 @@ namespace ir_sort {
                 // this block will fill the array "indexTracker"
                 uint_fast64_t positionFor_p_index_arr;
                 for (i = high; i >= 0; --i) {
-                    positionFor_p_index_arr = --box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) & modNum)];
+                    positionFor_p_index_arr = --box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) &
+                                                     modNum)];
                     p_arr_index[positionFor_p_index_arr] = p_copyArray_index[i];
                     indexTracker[p_copyArray_index[i]] = positionFor_p_index_arr;
                 }
             } else {
                 for (i = high; i >= 0; --i) {
-                    p_arr_index[--box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) & modNum)]] = p_copyArray_index[i];
+                    p_arr_index[--box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) &
+                                       modNum)]] = p_copyArray_index[i];
                 }
             }
 
@@ -725,10 +745,11 @@ namespace ir_sort {
 
         // using IndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
         using IndexType = int32_t;
-        if(high - low > (1ll << 32)) using IndexType = int64_t;
+        if (high - low > (1ll << 32)) using IndexType = int64_t;
 
         // SUBORDINATE VARIABLES
-        int_fast64_t arrMaxElement = getIndex(arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
+        int_fast64_t arrMaxElement = getIndex(
+                arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
         auto *arr_index = new IndexType[sortArrayLength];       // this array is used to store the index of partially sorted array
         auto *copyArray_index = new IndexType[sortArrayLength]; // this array is used to store the index of partially sorted array
         auto *p_arr_index = &arr_index[0];
@@ -803,13 +824,15 @@ namespace ir_sort {
                 // this block will fill the array "indexTracker"
                 uint_fast64_t positionFor_p_index_arr;
                 for (i = high; i >= 0; --i) {
-                    positionFor_p_index_arr = --box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) & modNum)];
+                    positionFor_p_index_arr = --box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) &
+                                                     modNum)];
                     p_arr_index[positionFor_p_index_arr] = p_copyArray_index[i];
                     indexTracker[p_copyArray_index[i]] = positionFor_p_index_arr;
                 }
             } else {
                 for (i = high; i >= 0; --i) {
-                    p_arr_index[--box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) & modNum)]] = p_copyArray_index[i];
+                    p_arr_index[--box[((getIndex(p_arr[p_copyArray_index[i]]) >> bitsShiftFactor) &
+                                       modNum)]] = p_copyArray_index[i];
                 }
             }
 
@@ -829,8 +852,10 @@ namespace ir_sort {
         // NOTE: though the below program me seem to be wrong for situations where all numbers are +ve or -ve
         // However, this function will only be called if there is atleast one -ve in all +ve OR one +ve in all -ve
         // binarySearch_low points to the first -ve number
-        if (binarySearch_low <= high) while (binarySearch_low >= 0 && getIndex(p_arr[p_arr_index[binarySearch_low]]) < 0) --binarySearch_low;
-        if (binarySearch_low >= 0) while (binarySearch_low <= high && getIndex(p_arr[p_arr_index[binarySearch_low]]) >= 0) ++binarySearch_low;
+        if (binarySearch_low <= high)
+            while (binarySearch_low >= 0 && getIndex(p_arr[p_arr_index[binarySearch_low]]) < 0)--binarySearch_low;
+        if (binarySearch_low >= 0)
+            while (binarySearch_low <= high && getIndex(p_arr[p_arr_index[binarySearch_low]]) >= 0)++binarySearch_low;
 
         if (!(binarySearch_low == (-1) || binarySearch_low == (high + 1))) {
             int64_t j;
@@ -863,15 +888,15 @@ namespace ir_sort {
 } // namespace ir_sort
 
 
-namespace fm_sort{
+namespace fm_sort {
 
     template<typename RandomAccessIterator, typename RandomAccessIter2>
     void fm_sort_objects(RandomAccessIterator first, RandomAccessIterator last, RandomAccessIter2 p_arr_index) {
         using IntegerIndexType = typename std::iterator_traits<RandomAccessIter2>::value_type;
 
         auto length = std::distance(first, last);
-        std::vector<IntegerIndexType > index_tracker(static_cast<unsigned long>(length));
-        for(int_fast64_t i = 0; i < length; ++i) {
+        std::vector<IntegerIndexType> index_tracker(static_cast<unsigned long>(length));
+        for (int_fast64_t i = 0; i < length; ++i) {
             index_tracker[p_arr_index[i]] = i;
         }
 
@@ -883,7 +908,7 @@ namespace fm_sort{
         // DONE: write loop to sort the array using "[b_first, b_last)"
         // DONE: refer the following link https://stackoverflow.com/questions/13102277/sort-an-array-by-an-index-array-in-c
         for (int_fast64_t i = 0; i < length; ++i) {
-            if(i != p_arr_index[i]) {
+            if (i != p_arr_index[i]) {
                 std::swap(first[i], first[p_arr_index[i]]);
                 index_tracker[p_arr_index[i]] = index_tracker[i];
             }
@@ -914,29 +939,32 @@ namespace fm_sort{
 
     uint64_t sub_array_start_pos[256];
 
+    // TODO: maybe not working
     template<typename RandomAccessIterator, typename ArrayValueType, typename Buffer>
-    void fm_sort_unsigned(const RandomAccessIterator first, const RandomAccessIterator last, int_fast32_t byteNumber, const Buffer buffer) {
+    void fm_sort_unsigned(const RandomAccessIterator first, const RandomAccessIterator last, int_fast32_t byteNumber,
+                          const Buffer buffer) {
         uint64_t box[256], sub_array_start[256], sub_array_last[256];
         int_fast32_t bitsShiftRight = (byteNumber - 1) * 8;
 
-        for(auto &i: box) i=0;
-        for(RandomAccessIterator temp_first = first; temp_first != last; ++temp_first){
-            ++box[((*temp_first) >> bitsShiftRight ) & 255];
+        for (auto &i: box) i = 0;
+        for (RandomAccessIterator temp_first = first; temp_first != last; ++temp_first) {
+            ++box[((*temp_first) >> bitsShiftRight) & 255];
         }
 
         // std::partial_sum(std::begin(box), std::end(box), std::begin(sub_array_last));
-        sub_array_start[0]  = sub_array_start_pos[0] = 0, sub_array_last[0] = sub_array_start[1] = sub_array_start_pos[1] = box[0];
-        for(int_fast32_t i = 2; i < 256; ++i){
-            sub_array_start[i] = sub_array_start_pos[i] = sub_array_last[i-1] = (box[i-1] + sub_array_last[i-2]);
+        sub_array_start[0] = sub_array_start_pos[0] = 0, sub_array_last[0] = sub_array_start[1] = sub_array_start_pos[1] = box[0];
+        for (int_fast32_t i = 2; i < 256; ++i) {
+            sub_array_start[i] = sub_array_start_pos[i] = sub_array_last[i - 1] = (box[i - 1] + sub_array_last[i - 2]);
         }
-        sub_array_last[255] = (box[255] + sub_array_last[254]); // SAME as: sub_array_last[255] = (box[255] + sub_array_start[255]);
+        sub_array_last[255] = (box[255] +
+                               sub_array_last[254]); // SAME as: sub_array_last[255] = (box[255] + sub_array_start[255]);
 
         // TODO: inplace sorting
         auto temp = (first[0]);
-        for(int_fast32_t i = 0; i < 256; ++i){
-            for(int_fast32_t j = sub_array_start_pos[i]; j < sub_array_last[i]; ++j){
+        for (int_fast32_t i = 0; i < 256; ++i) {
+            for (int_fast32_t j = sub_array_start_pos[i]; j < sub_array_last[i]; ++j) {
                 auto temp_masked = (first[j] >> bitsShiftRight) & 255;
-                while((temp_masked = (first[j] >> bitsShiftRight) & 255) != i){
+                while ((temp_masked = (first[j] >> bitsShiftRight) & 255) != i) {
                     // if the number belongs to the same sub-array, then we stop.
                     // else
                     //      it is moved to the new place and repeat this procedure
@@ -949,15 +977,16 @@ namespace fm_sort{
         }
 
         --byteNumber;
-        for(int_fast32_t i = 0; i < 256; ++i){
-            if(box[i] <= LINEAR_SORT_THRESHOLD){
+        for (int_fast32_t i = 0; i < 256; ++i) {
+            if (box[i] <= LINEAR_SORT_THRESHOLD) {
                 // ir_sort::basic_sorts::merge_sort(std::next(first, sub_array_start[i]), std::next(first, sub_array_last[i]));
                 // boost::sort::pdqsort(std::next(first, sub_array_start[i]), std::next(first, sub_array_last[i]));
                 // boost::sort::spreadsort::integer_sort(std::next(first, sub_array_start[i]), std::next(first, sub_array_last[i]));
                 ir_sort::parameter::iterations_required = byteNumber;
                 ir_sort::parameter::length = box[i];
-                ir_sort::stable_integer_sort_functions::radix_sort_asc_unsigned<RandomAccessIterator, ArrayValueType, Buffer>(std::next(first, sub_array_start[i]), buffer);
-            }else{
+                ir_sort::stable_integer_sort_functions::radix_sort_asc_unsigned<RandomAccessIterator, ArrayValueType, Buffer>(
+                        std::next(first, sub_array_start[i]), buffer);
+            } else {
                 fm_sort_unsigned<RandomAccessIterator, ArrayValueType, Buffer>
                         (std::next(first, sub_array_start[i]), std::next(first, sub_array_last[i]), byteNumber, buffer);
             }
@@ -965,10 +994,11 @@ namespace fm_sort{
     }
 
     template<typename RandomAccessIterator>
-    inline void fm_sort(const RandomAccessIterator first, const RandomAccessIterator last){
-        if(std::distance(first, last) <= COMPARISON_SORT_THRESHOLD) {
+    inline void fm_sort(const RandomAccessIterator first, const RandomAccessIterator last) {
+        if (std::distance(first, last) <= COMPARISON_SORT_THRESHOLD) {
             // ir_sort::basic_sorts::merge_sort(first, last);
-            boost::sort::spreadsort::integer_sort(first, last);
+            // boost::sort::spreadsort::integer_sort(first, last);
+            boost::sort::pdqsort(first, last);
             return;
         }
 
@@ -988,12 +1018,13 @@ namespace fm_sort{
          * NOTE: math.log2(72057594037927936) = 56
          * */
         using namespace ir_sort;
-        if(parameter::force_linear_sort == 1 ||
-           (std::max(first[0], std::max(first[parameter::length >> 1], first[parameter::length - 1])) >= 72057594037927936)){
+        if (parameter::force_linear_sort == 1 ||
+            (std::max(first[0], std::max(first[parameter::length >> 1], first[parameter::length - 1])) >=
+             72057594037927936)) {
             parameter::force_linear_sort = 1; // this statement is required if the condition 2 is true
             arrMaxElement = 1;
             arrMinElement = (ArrayValueType(-1) > ArrayValueType(0)) ? 0 : -1;
-        } else{
+        } else {
             // this for loop is used to FIND THE MAXIMUM and MINIMUM of all the elements in the given array with the help of RandomAccessIterator
             for (int_fast32_t i = 1; i < parameter::length; ++i) {
                 arrMaxElement = (first[i] > arrMaxElement) ? first[i] : arrMaxElement;
@@ -1032,13 +1063,17 @@ namespace fm_sort{
         } else if (bits_arrMinElement == bits_arrMaxElement) ++bits_arrMaxElement;
         else if (bits_arrMinElement > bits_arrMaxElement) bits_arrMaxElement = bits_arrMinElement;
 
-        auto byteNumber = (parameter::force_linear_sort == 1) ? (sizeof(ArrayValueType)) : ((bits_arrMaxElement >> 3) + ((bits_arrMaxElement & 7) != 0));
+        auto byteNumber = (parameter::force_linear_sort == 1) ? (sizeof(ArrayValueType)) : ((bits_arrMaxElement >> 3) +
+                                                                                            ((bits_arrMaxElement & 7) !=
+                                                                                             0));
 
         // TODO: make this generalised for signed numbers also
         auto buffer = new ArrayValueType[LINEAR_SORT_THRESHOLD];
-        fm_sort_unsigned<RandomAccessIterator, ArrayValueType, ArrayValueType*>(first, last, byteNumber, buffer);
+        fm_sort_unsigned<RandomAccessIterator, ArrayValueType, ArrayValueType *>(first, last, byteNumber, buffer);
         delete[] buffer;
     }
+
+#undef LINEAR_SORT_THRESHOLD
 #undef COMPARISON_SORT_THRESHOLD
 }
 

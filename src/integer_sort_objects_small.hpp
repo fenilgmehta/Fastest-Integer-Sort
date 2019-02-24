@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <iterator>
 
-#include "basic_sorts.hpp"
 #include "ir_commons.hpp"
 
 namespace ir_sort {
@@ -534,6 +533,7 @@ namespace ir_sort {
             // using ArrayIndexType = std::remove_reference_t<std::remove_const_t<decltype(getIndex(arr[0]))>>;
 
             const int_fast64_t sortArrayLength = high - low + 1;
+            int32_t pdqsort_THRESHOLD = 512;
 
             // ==========================================================
             // TODO, change the THRESHOLDS for objects
@@ -541,31 +541,31 @@ namespace ir_sort {
                 // FORCE radix_sort or counting_sort
                 // forceLinearSort == 1: uses counting_sort only
                 // forceLinearSort == 2: uses radix_sort or counting_sort, whichever is better
-                ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 0;
+                pdqsort_THRESHOLD = 0;
             } else if (forceLinearSort == -1) {
                 // FORCE merge_sort
-                ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
+                boost::sort::pdqsort(&arr[low], &arr[high]);
                 return;
             } else if (forceLinearSort == -2) {
                 // FORCE insertion_sort
-                ir_sort::basic_sorts::insertion_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
+                boost::sort::pdqsort(&arr[low], &arr[high]);
                 return;
             } else {
                 // dynamically choose the sort
                 // set merge_sort threshold based on size of ArrayValueType
                 std::size_t sizeOfArrayElementType = sizeof(ArrayValueType);
-                if (sizeOfArrayElementType == 1) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 49;
-                else if (sizeOfArrayElementType == 2) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 189;
-                else if (sizeOfArrayElementType == 4) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 194;
-                else if (sizeOfArrayElementType == 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 193;
+                if (sizeOfArrayElementType == 1) pdqsort_THRESHOLD = 49;
+                else if (sizeOfArrayElementType == 2) pdqsort_THRESHOLD = 189;
+                else if (sizeOfArrayElementType == 4) pdqsort_THRESHOLD = 194;
+                else if (sizeOfArrayElementType == 8) pdqsort_THRESHOLD = 193;
                 forceLinearSort = 0;    // if by any chance, forceLinearSort has any value less than -2 then it will be changed to 0
             }
 
 
             // ==========================================================
             // merge_sort
-            if (sortArrayLength < ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
+            if (sortArrayLength < pdqsort_THRESHOLD) {
+                boost::sort::pdqsort(&arr[low], &arr[high]);
                 return;
             }
 
@@ -610,24 +610,24 @@ namespace ir_sort {
             if (forceLinearSort == 0 && sortArrayLength < 408) {
                 if (onlyPositiveNumbers != 0) {
                     // +ve and -ve numbers
-                    if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 49;
-                    else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 77;
-                    else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 134;
-                    else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 165;
-                    else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 245;
-                    else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 302;
-                    else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 407;
-                    else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 455;
+                    if (bits_arrMaxElement <= 8) pdqsort_THRESHOLD = 49;
+                    else if (bits_arrMaxElement <= 16) pdqsort_THRESHOLD = 77;
+                    else if (bits_arrMaxElement <= 24) pdqsort_THRESHOLD = 134;
+                    else if (bits_arrMaxElement <= 32) pdqsort_THRESHOLD = 165;
+                    else if (bits_arrMaxElement <= 40) pdqsort_THRESHOLD = 245;
+                    else if (bits_arrMaxElement <= 48) pdqsort_THRESHOLD = 302;
+                    else if (bits_arrMaxElement <= 56) pdqsort_THRESHOLD = 407;
+                    else pdqsort_THRESHOLD = 455;
                 } else {
                     // +ve numbers ONLY
-                    if (bits_arrMaxElement <= 8) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 0;
-                    else if (bits_arrMaxElement <= 16) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 72;
-                    else if (bits_arrMaxElement <= 24) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 129;
-                    else if (bits_arrMaxElement <= 32) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 164;
-                    else if (bits_arrMaxElement <= 40) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 235;
-                    else if (bits_arrMaxElement <= 48) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 291;
-                    else if (bits_arrMaxElement <= 56) ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 401;
-                    else ir_sort::basic_sorts::MERGE_SORT_THRESHOLD = 457;
+                    if (bits_arrMaxElement <= 8) pdqsort_THRESHOLD = 0;
+                    else if (bits_arrMaxElement <= 16) pdqsort_THRESHOLD = 72;
+                    else if (bits_arrMaxElement <= 24) pdqsort_THRESHOLD = 129;
+                    else if (bits_arrMaxElement <= 32) pdqsort_THRESHOLD = 164;
+                    else if (bits_arrMaxElement <= 40) pdqsort_THRESHOLD = 235;
+                    else if (bits_arrMaxElement <= 48) pdqsort_THRESHOLD = 291;
+                    else if (bits_arrMaxElement <= 56) pdqsort_THRESHOLD = 401;
+                    else pdqsort_THRESHOLD = 457;
                 }
             }
 
@@ -636,8 +636,8 @@ namespace ir_sort {
             switch (onlyPositiveNumbers) {
                 case 0:
                     // +ve and -ve number to be sorted
-                        if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
+                        if (sortArrayLength <= pdqsort_THRESHOLD) {
+                            boost::sort::pdqsort(&arr[low], &arr[high]);
                             return;
                         } else {
                             radixSort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
@@ -646,8 +646,8 @@ namespace ir_sort {
                 default:
                     // +ve numbers ONLY
                     // -ve numbers ONLY
-                        if (sortArrayLength <= ir_sort::basic_sorts::MERGE_SORT_THRESHOLD) {
-                            ir_sort::basic_sorts::merge_sort_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, getIndex);
+                        if (sortArrayLength <= pdqsort_THRESHOLD) {
+                            boost::sort::pdqsort(&arr[low], &arr[high]);
                             return;
                         } else {
                             radixSort_Positive_asc<RandomAccessIterator, ArrayValueType, myGetIndex>(arr, low, high, sortArrayLength, bits_arrMaxElement, getIndex);
