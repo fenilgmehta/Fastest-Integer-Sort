@@ -414,7 +414,8 @@ namespace ir_sort {
                     // for (i = 0; i < parameter::length; ++i) {
                     //     start_arr[i] = buffer[i];
                     // }
-                    std::copy(buffer, std::next(buffer, parameter::length), start_arr);
+                    // std::copy(buffer, std::next(buffer, parameter::length), start_arr);
+                    std::copy_n(buffer, parameter::length, start_arr);
             }
         }
 
@@ -449,7 +450,8 @@ namespace ir_sort {
             // for last column which contains the bit which decides the sign of a number
 
             if (parameter::iterations_required % 2) {
-                std::copy(buffer, std::next(buffer, parameter::length), start_arr);
+                // std::copy(buffer, std::next(buffer, parameter::length), start_arr);
+                std::copy_n(buffer, parameter::length, start_arr);
             }
         }
 
@@ -626,14 +628,14 @@ namespace ir_sort {
         // SUBORDINATE VARIABLES
         int_fast64_t arrMaxElement = getIndex(
                 arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
-        auto *arr_index = new IndexType[sortArrayLength];       // this array is used to store the index of partially sorted array
-        auto *copyArray_index = new IndexType[sortArrayLength]; // this array is used to store the index of partially sorted array
+        std::vector<IndexType> arr_index(sortArrayLength);          // this array is used to store the index of partially sorted array
+        std::vector<IndexType> copyArray_index(sortArrayLength);    // this array is used to store the index of partially sorted array
         auto *p_arr_index = &arr_index[0];
         auto *p_copyArray_index = &copyArray_index[0];
         ArrayElementType *p_arr = &arr[low];
         high -= low;
 
-        auto *indexTracker = new IndexType[sortArrayLength];
+        std::vector<IndexType> indexTracker(sortArrayLength);
 
         // REQUIRED VARIABLES
         int_fast64_t i;                         // IMPORTANT: used for iterations
@@ -660,17 +662,15 @@ namespace ir_sort {
         // the size of the array "box" is "boxArraySize" so that the numbers from 0 to "boxArraySize - 1" can be tracked in the column being scanned
         uint_fast64_t box[boxArraySize];
 
-        // this will fill the arr_index with the values from 0, 1, 2, 3, ..., (high - 1)
-        // for (i = 0; i <= high; ++i) arr_index[i] = i;
+        // this will fill the arr_index with the values from 0, 1, 2, 3, ..., high
+        // std::iota(arr_index.begin(), arr_index.end(), 0);
         std::iota(&arr_index[0], &arr_index[high] + 1, 0);
 
         // START ACTUAL SORTING
         // This condition is used so that all the digits of each element are checked and "arr" is sorted according to the digit considered
         while (iterationsRequired-- > 0) {
             // default values of all the elements of the array "box" = 0
-            for (i = 0; i < boxArraySize;) {
-                box[i++] = 0;
-            }
+            std::fill_n(box, boxArraySize, 0);
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column
             for (i = 0; i <= high; ++i) {
@@ -678,9 +678,10 @@ namespace ir_sort {
             }
 
             // this for loop is used to add the values of the previous element to the next element of the array "box"
-            for (i = 1; i < boxArraySize; ++i) {
-                box[i] += box[i - 1];
-            }
+            // for (i = 1; i < boxArraySize; ++i) {
+            //     box[i] += box[i - 1];
+            // }
+            std::partial_sum(&box[0], &box[boxArraySize], &box[0]);
 
             // this statement will copy all the elements of "arr" to "arr_index"
             // BEFORE this step,
@@ -724,10 +725,6 @@ namespace ir_sort {
             p_arr_index[indexTracker[i]] = p_arr_index[i];
             indexTracker[p_arr_index[i]] = indexTracker[i];
         }
-
-        delete[] indexTracker;
-        delete[] arr_index;
-        delete[] copyArray_index;
     }
 
 
@@ -748,16 +745,15 @@ namespace ir_sort {
         if (high - low > (1ll << 32)) using IndexType = int64_t;
 
         // SUBORDINATE VARIABLES
-        int_fast64_t arrMaxElement = getIndex(
-                arr[high]);       // "arrMaxElement" is used to store the largest element in "arr"
-        auto *arr_index = new IndexType[sortArrayLength];       // this array is used to store the index of partially sorted array
-        auto *copyArray_index = new IndexType[sortArrayLength]; // this array is used to store the index of partially sorted array
+        int_fast64_t arrMaxElement = getIndex(arr[high]);           // "arrMaxElement" is used to store the largest element in "arr"
+        std::vector<IndexType> arr_index(sortArrayLength);          // this array is used to store the index of partially sorted array
+        std::vector<IndexType> copyArray_index(sortArrayLength);    // this array is used to store the index of partially sorted array
         auto *p_arr_index = &arr_index[0];
         auto *p_copyArray_index = &copyArray_index[0];
         ArrayElementType *p_arr = &arr[low];
         high -= low;
 
-        auto *indexTracker = new IndexType[sortArrayLength];
+        std::vector<IndexType> indexTracker(sortArrayLength);
 
         // REQUIRED VARIABLES
         int_fast64_t i;                         // IMPORTANT: used for iterations
@@ -784,7 +780,7 @@ namespace ir_sort {
         // the size of the array "box" is "boxArraySize" so that the numbers from 0 to "boxArraySize - 1" can be tracked in the column being scanned
         uint_fast64_t box[boxArraySize];
 
-        // this will fill the arr_index with the values from 0, 1, 2, 3, ..., (high - 1)
+        // this will fill the arr_index with the values from 0, 1, 2, 3, ..., high
         // for (i = 0; i <= high; ++i) arr_index[i] = i;
         std::iota(&arr_index[0], &arr_index[high] + 1, 0);
 
@@ -792,9 +788,7 @@ namespace ir_sort {
         // This condition is used so that all the digits of each element are checked and "arr" is sorted according to the digit considered
         while (iterationsRequired-- > 0) {
             // default values of all the elements of the array "box" = 0
-            for (i = 0; i < boxArraySize;) {
-                box[i++] = 0;
-            }
+            std::fill_n(box, boxArraySize, 0);
 
             // this for loop will note number of zeros, ones, twos ... "boxArraySize - 1" present in the column
             for (i = 0; i <= high; ++i) {
@@ -802,9 +796,10 @@ namespace ir_sort {
             }
 
             // this for loop is used to add the values of the previous element to the next element of the array "box"
-            for (i = 1; i < boxArraySize; ++i) {
-                box[i] += box[i - 1];
-            }
+            // for (i = 1; i < boxArraySize; ++i) {
+            //     box[i] += box[i - 1];
+            // }
+            std::partial_sum(&box[0], &box[boxArraySize], &box[0]);
 
             // this statement will copy all the elements of "arr" to "arr_index"
             // BEFORE this step,
@@ -879,10 +874,6 @@ namespace ir_sort {
             p_arr_index[indexTracker[i]] = p_arr_index[i];
             indexTracker[p_arr_index[i]] = indexTracker[i];
         }
-
-        delete[] indexTracker;
-        delete[] arr_index;
-        delete[] copyArray_index;
     }
 
 } // namespace ir_sort
