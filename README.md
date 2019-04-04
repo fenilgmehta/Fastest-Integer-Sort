@@ -1,5 +1,5 @@
 # Fastest-Integer-Sort
-These are generalised functions written in C++ which are highly optimised for the sorting of integer based array or vectors. It is 4 times faster than C++ STL std::sort for "int64_t array[10000000]".
+These are generalised functions written in C++ which are highly optimised for the sorting of integer based array or vectors. It is 2.48 times faster than C++ STL std::sort for "std::vector<uint64_t> arrayName(10000000)".
 
 
 Details
@@ -7,7 +7,7 @@ Details
 1. "ir_sort::integer_sort" is the name of the function to sort the integer based arrays.
 2. Four parameters: first two parameters are same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
 3. Sort the input in ascending order and descending order.
-4. Compiled using "g++ -std=c++14 -m64 -march=native" for testing
+4. Compiled using "g++ -std=c++14 -O2 -m64 -march=native" for testing
 5. Can be called on all containers with RandomAccessIterator
 6. Requirements:
     * [first, last) is a valid range.
