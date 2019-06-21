@@ -11,10 +11,10 @@ Details
 5. Can be called on all containers with RandomAccessIterator
 6. Requirements:
     * [first, last) is a valid range.
-    * RandomAccessIter value_type is mutable.
-    * RandomAccessIter value_type is LessThanComparable.
-    * RandomAccessIter value_type supports the operator>>, which returns an integer-type right-shifted a specified number of bits.
-    * RandomAccessIter supports the operator[], which returns the i'th element of the container.
+    * RandomAccessIterator value_type is mutable.
+    * RandomAccessIterator value_type is LessThanComparable.
+    * RandomAccessIterator value_type supports the operator>>, which returns an integer-type right-shifted a specified number of bits.
+    * RandomAccessIterator supports the operator[], which returns the i'th element of the container.
 
 
 Features
@@ -60,15 +60,15 @@ The graphs above shows how ir_sort::integer_sort starts performing better with h
 Usage
 ----------------------------------
 For projects:
-```
-// copy the following four files to the project folder: "basic_sorts.hpp", "integer_sort.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
+```c++
+// copy the following four files to the project folder: "basic_sorts.hpp", "ir_commons.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
 
 // paste the following lines in the file start
 include "integer_sort.cpp"
 ```
 
 For competitions:
-```
+```c++
 // copy the namespace "ir_sort" from "ir_sort_competitions.cpp" to the main ".cpp" program file
 
 // to call the function, from the namespace "ir_sort"

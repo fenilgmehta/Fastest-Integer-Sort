@@ -10,6 +10,7 @@
 #include <bits/stdc++.h>
 #include <boost/sort/sort.hpp>
 #include <boost/sort/spreadsort/float_sort.hpp>
+#include "../references/ska_sort.hpp"
 
 // #include <iostream>
 // #include <cstdint>
@@ -41,6 +42,7 @@ using namespace std::chrono;
 #define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int32_t columnWidth = 15;
 
+using ArrayIndexType = int64_t;
 
 // ###################################################
 // ################# SETTINGS start ##################
@@ -77,7 +79,7 @@ const int32_t columnWidth = 15;
  * Number of bits to be used
  *
  * */
-const int32_t myBits = 32;
+const int32_t myBits = 62;
 
 /*
  * Select the datatype of the array to be used for testing
@@ -86,9 +88,7 @@ const int32_t myBits = 32;
 // using ArrayDataType = int8_t;
 // using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
-// using ArrayDataType = int64_t;
 using ArrayDataType = int64_t;
-using ArrayIndexType = ArrayDataType;
 
 // ###################################################
 // ################### SETTINGS end ##################
@@ -170,7 +170,9 @@ void fillRandArray(T &arr, const int64_t &low, const int64_t &high, const int64_
 #define m_PRINT_TIME_TAKEN cout << endl << setw(columnWidth) << duration.count();
 #define checkSortingRange_asc(_arr, _low, _high) if (!(isSortedAscending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in ascending order\n"; dblimit(_arr, _low, _high);}
 #define checkSortingRange_desc(_arr, _low, _high) if (!(isSortedDescending(_arr, _low, _high))) {cout << "\nERROR: array is not sorted in descending order\n"; dblimit(_arr, _low, _high);}
-#define m_ALL(name1) next(begin(name1),myTempLow), next(begin(name1),myTempHigh+1)
+// #define m_ALL(name1) next(begin(name1),myTempLow), next(begin(name1),myTempHigh+1)
+// #define m_ALL(name1) begin(name1)+myTempLow, begin(name1)+myTempHigh+1
+#define m_ALL(name1) &name1[0]+myTempLow, &name1[0]+myTempHigh+1
 
 //#########################################################################################################################################
 //#########################################################################################################################################
@@ -204,13 +206,13 @@ int32_t main() {
     db1(arrayLength)
     db1(testCases)
 
-    int64_t timeArrLength = 6;
+    int64_t timeArrLength = 7;
     vector<int64_t> timeArr(static_cast<unsigned long>(timeArrLength), 0);             // used to store the time taken for a particular sorting technique
     vector<int64_t> bestThreshold(static_cast<unsigned long>(timeArrLength), 0);       // used to keep track of the best THRESHOLD
     vector<double> sortSpeedRatio(static_cast<unsigned long>(timeArrLength), 0);       // used to keep track of the best THRESHOLD
 
     if(settings_PRINT_TIME_COMPARISON){
-        cout<<"ir_sort,std::sort,boost::sort::spreadsort::integer_sort,boost::sort::pdqsort,boost::sort::spinsort,boost::sort::flat_stable_sort"<<endl;
+        cout<<"ir_sort,std::sort,ska_sort,boost::sort::spreadsort::integer_sort,boost::sort::pdqsort,boost::sort::spinsort,boost::sort::flat_stable_sort"<<endl;
     }
 
     rangeup(__, 0, testCases) {
@@ -230,14 +232,23 @@ int32_t main() {
         int64_t timeArrIndex = 0;
 
         m_START_TIME
-        ir_sort::integer_sort_stable(m_ALL(arr), true);
-        // fm_sort::fm_sort(m_ALL(arr));
+        // ir_sort::integer_sort(m_ALL(arr), true);
+        ir_sort::integer_sort_stable(m_ALL(arr), true, 3); // better
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
 
         m_START_TIME
         std::sort(m_ALL(arr));
+        m_END_TIME
+        timeArr[timeArrIndex++] = duration.count();
+        // if (!isSorted(&arr[0], myTempLow, myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
+
+        m_START_TIME
+        // ska_sort(m_ALL(arr));
+        auto *buffer = new ArrayDataType[arrayLength];
+        detail::SizedRadixSorter<8>::sort(m_ALL(arr), buffer, [](ArrayDataType &a){return a;});
+        delete[] buffer;
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         // if (!isSorted(&arr[0], myTempLow, myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
@@ -290,4 +301,6 @@ int32_t main() {
 
     return 0;
 }
+
+
 
