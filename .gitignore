@@ -5,7 +5,7 @@
 cmake-build-debug/*
 CMakeList.txt
 
-ProgressReport.md
+ProgressReport_sorting.md
 references/*
 test/*.out
 

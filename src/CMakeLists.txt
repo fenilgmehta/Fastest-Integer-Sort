@@ -24,7 +24,7 @@ FOREACH (sourceFile ${sourceFILES})
 endforeach (sourceFile)
 
 #add_executable(basic_sorts.cpp basic_sorts.cpp)
-#add_executable(integer_sort.hpp integer_sort.hpp)
+#add_executable(ir_commons.hpp ir_commons.hpp)
 #add_executable(integer_sort.cpp integer_sort.cpp)
 #add_executable(integer_sort_objects_small.cpp integer_sort_objects_small.cpp)
 #add_executable(ir_sort_competitions.cpp ir_sort_competitions.cpp)

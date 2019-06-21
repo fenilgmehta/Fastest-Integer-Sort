@@ -24,8 +24,8 @@
 #include <boost/sort/sort.hpp>
 #include <boost/sort/spreadsort/float_sort.hpp>
 
-#include "../src/integer_sort.cpp"
-#include "../references/NewRadixGitBoost.h"
+#include "../src/integer_sort.hpp"
+#include "../references/ska_sort.hpp"
 
 //#################################################
 using namespace std;
@@ -314,9 +314,10 @@ int32_t main() {
             int64_t timeArrIndex = 0;
 
             startTime
+            boost::sort::spreadsort::integer_sort(arr.begin(), arr.end(), [](const myClassInt& a, const int& val){return a.classGetIndex() >> val;});
             // ska_sort(begin(arr), end(arr), [](myClassInt &a){return a.classGetIndex();});
-            boost::sort::spreadsort::integer_sort(begin(arr), end(arr), [](const ArrayDataType& a, const int& val){return a.classGetIndex() >> val;});
-            std::sort(begin(arr), end(arr), [](ArrayDataType &a , ArrayDataType &b){return a.classGetIndex() < b.classGetIndex();});
+            // boost::sort::spreadsort::integer_sort(begin(arr), end(arr), [](const ArrayDataType& a, const int& val){return a.classGetIndex() >> val;});
+            // std::sort(begin(arr), end(arr), [](ArrayDataType &a , ArrayDataType &b){return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::pdqsort(begin(arr), end(arr), [](ArrayDataType &a, ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::spinsort(begin(arr), end(arr), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::flat_stable_sort(begin(arr), end(arr), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
@@ -344,7 +345,7 @@ int32_t main() {
             // boost::sort::spinsort(begin(p_arr_index), end(p_arr_index), [arr_first](const IndexType &a, const IndexType &b){return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, excellent results
             // boost::sort::flat_stable_sort(begin(p_arr_index), end(p_arr_index), [arr_first](const IndexType &a, const IndexType &b){ return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, for all ranges, excellent results
 
-            fm_sort(begin(baseArray), end(baseArray), begin(p_arr_index));
+            fm_sort::fm_sort_objects(begin(baseArray), end(baseArray), begin(p_arr_index));
 
             // ir_sort::radixSort_Positive_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
             // ska_sort(begin(baseArray), end(baseArray), [](myClassInt &a){return a.classGetIndex();});

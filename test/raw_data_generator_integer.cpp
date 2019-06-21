@@ -23,7 +23,7 @@
 
 // #include <type_traits>
 
-#include "../src/integer_sort.cpp"
+#include "../src/integer_sort.hpp"
 
 //#################################################
 using namespace std;
@@ -77,7 +77,7 @@ const int32_t columnWidth = 15;
  * Number of bits to be used
  *
  * */
-const int32_t myBits = 7;
+const int32_t myBits = 32;
 
 /*
  * Select the datatype of the array to be used for testing
@@ -86,6 +86,7 @@ const int32_t myBits = 7;
 // using ArrayDataType = int8_t;
 // using ArrayDataType = int16_t;
 // using ArrayDataType = int32_t;
+// using ArrayDataType = int64_t;
 using ArrayDataType = int64_t;
 using ArrayIndexType = ArrayDataType;
 
@@ -229,7 +230,8 @@ int32_t main() {
         int64_t timeArrIndex = 0;
 
         m_START_TIME
-        ir_sort::integer_sort(m_ALL(arr), true);
+        ir_sort::integer_sort_stable(m_ALL(arr), true);
+        // fm_sort::fm_sort(m_ALL(arr));
         m_END_TIME
         timeArr[timeArrIndex++] = duration.count();
         if (!isSorted(begin(arr)+myTempLow, begin(arr)+myTempHigh)) cerr << endl << "ERROR: array \""<<timeArrIndex<<"\" not sorted :(";
