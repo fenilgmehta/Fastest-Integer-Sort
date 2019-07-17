@@ -4,7 +4,7 @@
 
 object_file=$1
 
-if [ ! -d $2 ]; then
+if [[ ! -d $2 ]]; then
     mkdir -p $2
     echo "Folder created"
 fi
@@ -22,7 +22,7 @@ g++ -O2 "data_generator_integer.cpp" -o "${1}" || exit
 echo 'Compilation successfully completed' && echo
 
 i=10
-test_cases=5000
+test_cases=5
 
 echo "test_cases = ${test_cases}" && echo
 
