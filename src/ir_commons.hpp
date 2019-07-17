@@ -20,20 +20,7 @@ namespace ir_sort{
 
             while (num > 0) {
                 num >>= 1;
-                result += 1;
-            }
-
-            return result;
-        }
-
-        template<typename T>
-        inline int_fast16_t countBits_negative(const T &negativeNum) {
-            auto num = static_cast<uint_fast64_t>(-negativeNum);
-            int_fast16_t result = 0;
-
-            while (num > 0) {
-                num >>= 1;
-                result += 1;
+                ++result;
             }
 
             return result;
@@ -41,8 +28,18 @@ namespace ir_sort{
 
         template<typename T>
         inline int_fast16_t countBits(const T &num) {
-            if (num < 0) return countBits_negative(num);
-            return countBits_positive(num);
+            /*
+             * To understand the working of this function for -ve numbers, try to understand
+             * the trick used to find 2's complement with Deterministic Finite Automata(DFA)
+             *
+             * Trick explanation
+             * We start from the right and move towards the left, then move towards the
+             * left leaving all bits unchanged until "1" is encountered. We start flipping
+             * the bits from the left of the first occurrence of "1".
+             * */
+
+            return ((num > 0) ? countBits_positive(num)
+                              : countBits_positive(-num));
         }
 
 //############################################################################
