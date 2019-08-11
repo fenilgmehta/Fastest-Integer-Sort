@@ -1,73 +1,103 @@
 # Fastest-Integer-Sort
-These are generalised functions written in C++ which are highly optimised for the sorting of integer based array or vectors. It is 2.48 times faster than C++ STL std::sort for "std::vector<uint64_t> arrayName(10000000)".
-
-
-Details
-----------------------------------
-1. "ir_sort::integer_sort" is the name of the function to sort the integer based arrays.
-2. Four parameters: first two parameters are same as std::sort, ascendingOrder(boolean)(optional), forceLinearSort(integer)(optional)
-3. Sort the input in ascending order and descending order.
-4. Compiled using "g++ -std=c++14 -O2 -m64 -march=native" for testing
-5. Can be called on all containers with RandomAccessIterator
-6. Requirements:
-    * [first, last) is a valid range.
-    * RandomAccessIterator value_type is mutable.
-    * RandomAccessIterator value_type is LessThanComparable.
-    * RandomAccessIterator value_type supports the operator>>, which returns an integer-type right-shifted a specified number of bits.
-    * RandomAccessIterator supports the operator[], which returns the i'th element of the container.
-
-
-Features
-----------------------------------
-1. faster than any other sorting algorithm for integer arrays
-2. stable sorting
-3. takes the advantage of binary operations over decimal operations
-4. linear time complexity
-5. very useful in competitions(refer "ir_sort_competitions.cpp" for usage in competitions)
-6. added new function for sorting object arrays based on integer keys
-7. valid but not limited to the following C++ Standard Template Library(STL) containers for sorting:
-    * std::array
-    * std::valarray
-    * std::vector
-    * std::deque
-
-
-Time complexity
-----------------------------------
-| Case         | Time complexity |
-|:------------:|:---------------:|
-| best case    | Ω(nk)           |
-| average case | θ(nk)           |
-| worst case   | O(nk)           |
+Algorithm written in C++ which is highly optimised for the sorting of arrays and vectors of large objects.
 
 
 Graph
 ----------------------------------
-![Speed Comparison, int64_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int64_t/Figure_1_int64_t.png)
-![Speed Comparison, int32_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int32_t/Figure_1_int32_t.png)
-![Speed Comparison, int16_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int16_t/Figure_1_int16_t.png)
-![Speed Comparison, int8_t](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/master/graphs_and_analysis/all_comparisons/rawData_int8_t/Figure_1_int8_t.png)
+![Running time comparision of fm_sort optimization with other sorting algorithms](https://raw.githubusercontent.com/fenilgmehta/Fastest-Integer-Sort/develop/graphs_and_analysis/Graphs_v3/Figure_1.png)
+
+
+Stats
+----------------------------------
+* Results for ```Array length = 781250```, ```Object size = 4 K bytes = vector<uint64_t>[512]```, ```Array size = 2.98 GB```:
+    - 6.32 times faster than C++ STL std::sort
+    - 5.55 times faster than std::stable_sort
+    - 3.80 times faster than pdqsort
+    - 3.15 times faster than spinsort
+    - 2.82 times faster than timsort
+    - 2.55 times faster than flat_stable_sort
+    - 2.22 times faster than spreadsort
+    - 1.53 times faster than skasort
+
+* Test conditions:
+    1. Compiled using "g++ -std=c++17 -O2 -m64 -march=native" for testing
+    2. timsort is used to sort the array/vector of objects based on index
+    3. Arrays used to test the performance
+        - random
+        - sorted
+        - sorted + 0.1% end
+        - sorted +   1% end
+        - sorted +  10% end
+        - sorted + 0.1% mid
+        - sorted +   1% mid
+        - sorted +  10% mid
+        - rev sorted
+        - rev sorted + 0.1% end
+        - rev sorted +   1% end
+        - rev sorted +  10% end
+        - rev sorted + 0.1% mid
+        - rev sorted +   1% mid
+        - rev sorted +  10% mid
+
+Details
+----------------------------------
+1. "fm_sort::fm_sort_objects" is the name of the function to sort an array based on index
+2. Three parameters:
+    - first : iterator pointing to the first element of the object array
+    - last  : iterator pointing the element one beyond the last element
+    - p_arr_index: Auxiliary array/vector with the correct index of the elements of the range [first, last)
+3. Sort the input in ascending order and descending order.
+4. Can be called on all containers with RandomAccessIterator
+5. Time complexity depends on the sorting algorithm used to sort the index array
+6. Auxiliary space complexity is O(n) - a vector of type uint16_t/uint32_t/uint64_t of size **n** is required which can be negligible as compared to the size of the array/vector to be sorted and the performance improvement.
+
+Features
+----------------------------------
+1. faster than any other sorting algorithm for large object arrays
+2. stable/unstable sorting based on the sorting technique used to sort the index array
+3. takes the advantage of large size of the objects
+4. very useful in places where in-memory sorting is to be performed on large objects
+5. valid but not limited to the following C++ Standard Template Library(STL) containers for sorting:
+    * std::vector
+    * std::array
+    * std::valarray
 
 
 Basic working
 ----------------------------------
-It is a stable sorting algorithm.
-This algorithm takes the advantage of bitwise operations provided by the C++ language on top of processors which run at a very high speed as compared to the other operations like addition, subtraction, multiplication, division, etc. Along with this, it uses radix sort to make the sorting faster.
-I have combined the above mentioned things into one algorithm which would sort the input given to it. To improve the performance for small size of input arrays, I have used insertion sort and merge sort.
-The graphs above shows how ir_sort::integer_sort starts performing better with higher array size.
+* Working of swapping optimization
+    - Once fm_sort get the correct positions of the objects in the index array, the original array is sorted based on the index array in just **n** swaps
+* Working of the ir_sort
+    - This algorithm takes the advantage of bitwise operations provided by the C++ language on top of processors which run at a very high speed as compared to the other operations like addition, subtraction, multiplication, division, etc. Along with this, it uses radix sort to make the sorting faster.
+    - I have combined the above mentioned things into one algorithm which would sort the input given to it.
 
 
 Usage
 ----------------------------------
-For projects:
+* To use this sorting optimization in your project, follow the below mentioned steps - 
 ```c++
-// copy the following four files to the project folder: "basic_sorts.hpp", "ir_commons.hpp", "integer_sort.cpp" and "integer_sort_objects_small.cpp"
+// copy the following four files to the project folder: "ir_commons.hpp", "integer_sort.hpp" and "integer_sort_objects_small.hpp"
 
 // paste the following lines in the file start
-include "integer_sort.cpp"
+#include "integer_sort.hpp"
+#include "integer_sort_objects_small.hpp"
+
+// assume "arr1" is the vector of objects(type T) to be sorted
+// assume "compare_function" is a function which is used to compare elements(type T) of the vector "arr1"
+
+using IndexType = uint64_t;
+vector<IndexType> p_arr_index(arr1.size());
+iota(p_arr_index.begin(), p_arr_index.end(), 0);
+
+auto arr_first = arr1.begin();
+std::sort(p_arr_index.begin(), p_arr_index.end(), [arr_first](const IndexType &a, const IndexType &b) { return compare_function(arr_first[a], arr_first[b]); });
+
+fm_sort::fm_sort_objects(arr1.begin(), arr1.end(), begin(p_arr_index));
+
 ```
 
-For competitions:
+
+* To use the radix sort in competitions, follow the below mentioned steps:
 ```c++
 // copy the namespace "ir_sort" from "ir_sort_competitions.cpp" to the main ".cpp" program file
 
@@ -80,8 +110,3 @@ ir_sort::integer_sort(begin, end)
 ```
 
 
-TODO
-----------------------------------
-1. Write the sorting function to sort the array of objects based on integer key without creating copy of the objects.
-    * descending order for +ve and -ve numbers
-    * this will be useful where the objects are large in size.
