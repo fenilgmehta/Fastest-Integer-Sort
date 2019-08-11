@@ -9,27 +9,20 @@
 #pragma ide diagnostic ignored "OCSimplifyInspection"
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <iomanip>
+
+#include "./common_functions.hpp"
+
 #include <boost/sort/sort.hpp>
 #include <boost/sort/common/file_vector.hpp>
 
 #include "../src/integer_sort.hpp"
+#include "../src/integer_sort_objects_small.hpp"
+
 #include "../references/kxsort.h"
 #include "../references/ska_sort.hpp"
 
-#include <unistd.h>
-
-// #include <iostream>
-// #include <cstdint>
-
-// #include <iomanip>
-// #include <algorithm>
-// #include <chrono>
-// #include <cstring>
-// #include <array>
-// #include <vector>
-
-// #include <type_traits>
 
 
 //#################################################
@@ -37,15 +30,6 @@ using namespace std;
 using namespace std::chrono;
 
 //#################################################
-#define endl '\n'
-#define db1(x) cerr << "\033[1;31m" << "\nDebug: " << "\033[0m" << setw(30) << left << #x << " = " << (x);
-#define db2(x, y) cerr << "\033[1;31m" << "\nDebug: " << "\033[0m" << #x << " = " << (x) << ",   " << #y << " = " << (y);
-#define db3(x, y, z) cerr << "\033[1;31m" << "\nDebug: " << "\033[0m" << #x << " = " << (x) << ",   " << #y << " = " << (y) << ",   " << #z << " = " << (z);
-#define dblimit(arr, l, h) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #arr << " [" << (l) << " : " << (h) << "] = "; for(int64_t i = (l); i <= (h); i++) cerr << (arr)[i] << ", "; cerr << endl;
-#define dbiter(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(auto i_temp1 = 0, len_temp1 = (len), iter_temp1 = first; i_temp1 < len_temp1; ++i_temp1) cerr<<iter_temp1[i_temp1]<<", "; cerr<<endl;
-
-//#################################################
-#define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int32_t columnWidth = 15;
 
 
@@ -108,76 +92,6 @@ inline bool f4_notEquals(const ArrayDataType &a, const ArrayDataType &b) { retur
 //#########################################################################################################################################
 //#########################################################################################################################################
 //#########################################################################################################################################
-template<typename T>
-int64_t maxIndex(const T &arr, const int64_t &size) {
-    int64_t index = 0;
-    for(int64_t i=1; i<size; i++) if (arr[i] > arr[index]) index = i;
-    return index;
-}
-
-template<typename T>
-int64_t minIndex(const T &arr, const int64_t &size) {
-    int64_t index = 0;
-    for(int64_t i=1; i<size; i++) if (arr[i] < arr[index]) index = i;
-    return index;
-}
-
-template<typename RandomAccessIterator>
-bool isSorted(RandomAccessIterator first, const RandomAccessIterator last, const bool &checkAscendingOrder = settings_SORT_IN_ASCENDING_ORDER) {
-    first++;
-    if (checkAscendingOrder) {
-        while(first != last){
-            if(*next(first, -1) > *first) return false;
-            first++;
-        }
-    } else {
-        while(first != last){
-            if(*next(first, -1) < *first) return false;
-            first++;
-        }
-    }
-    return true;
-}
-
-template<typename RandomAccessIterator>
-bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomAccessIterator second){
-    RandomAccessIterator it_first = first, it_second = second;
-    int index = 0;
-
-    while(it_first != last){
-        if((*it_first)!=(*it_second)){
-            cout << "\n\nERROR: arrays not equal";
-            db3(index, *it_first, *it_second)
-            // dbiter("arr1[]", first, distance(first, last))
-            // dbiter("arr2[]", second, distance(first, last))
-            return false;
-        }
-        ++index;
-        ++it_first;
-        ++it_second;
-    }
-    return true;
-}
-
-template<typename T>
-void printArray(T &arr, int64_t low, int64_t high) {
-    cout << endl;
-    for (int64_t i = low; i <= high; i++) cout << arr[i] << ", ";
-    cout << endl;
-}
-
-template<typename RandomAccessIterator>
-void fillRandArray(RandomAccessIterator first, RandomAccessIterator last, const ArrayDataType randStart, const ArrayDataType randEnd) {
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
-    std::uniform_int_distribution<ArrayDataType> dis(randStart, randEnd);
-
-    for(; first != last; ++first) (*first) = dis(gen);
-}
-
-//#########################################################################################################################################
-//#########################################################################################################################################
-//#########################################################################################################################################
 #define m_START_TIME_ONLY start = high_resolution_clock::now();
 #define m_START_TIME copy(&baseArray[0], &baseArray[0] + arrayLength, &arr[0]); start = high_resolution_clock::now();
 #define m_END_TIME stop = high_resolution_clock::now(); duration = duration_cast<nanoseconds>(stop - start);
@@ -229,11 +143,14 @@ int32_t main() {
     // baseArray: used to store the random array generated for each test-case
     vector<ArrayDataType> arr(static_cast<unsigned long>(maxArrayLength));
     vector<ArrayDataType> baseArray(static_cast<unsigned long>(maxArrayLength));
+    // forward_list<int> fl1;
+    // ir_sort::integer_sort_stable(begin(fl1), end(fl1));
+    // std::sort(begin(fl1), end(fl1));
 
     for(int64_t arrayLength=minArrayLength; arrayLength<=maxArrayLength; arrayLength++){
         cout << "#####################################################################";
-        db1(arrayLength)
-        db1(testCases)
+        db(arrayLength);
+        db(testCases);
 
         sort1Ratio = 0, sort2Ratio = 0;
 
@@ -248,7 +165,7 @@ int32_t main() {
                  << setw(setwLenRatio) << "ratio sort1" << "\t," << setw(setwLenRatio) << "ratio sort2";
         }
 
-        rangeup(__, 0, testCases) {
+        urange(__, 0, testCases) {
             // index to insert data in timeArr
             int64_t timeArrIndex = 0;
             int64_t myTempLow = 0, myTempHigh = arrayLength - 1;
@@ -262,7 +179,7 @@ int32_t main() {
                 // else
                 //     fillRandArray(m_ALL(baseArray), (-(1LL << myBits)) + 1, -1);
 
-                fillRandArray(m_ALL(baseArray), 0, static_cast<const ArrayDataType>((((1uLL << (myBits - 1)) - 1) << 1) + 1));
+                fillRandArray(m_ALL(baseArray), static_cast<const ArrayDataType>(0), static_cast<const ArrayDataType>((((1uLL << (myBits - 1)) - 1) << 1) + 1));
 
                 sort(m_ALL(baseArray));
                 sort(m_ALL(arr));
@@ -270,7 +187,7 @@ int32_t main() {
             }
 
             m_START_TIME
-            ir_sort::integer_sort_stable(m_ALL(arr), 0);
+            ir_sort::integer_sort_stable(m_ALL(arr));
             // ir_sort::integer_sort(m_ALL(arr), true);
             // sort(m_ALL(arr));
             // ska_sort(m_ALL(arr));
@@ -283,11 +200,13 @@ int32_t main() {
             // delete[] buffer;
             m_END_TIME
             timeArr[timeArrIndex++] = duration.count();
-            if (!isSorted(m_ALL(arr))) cerr << endl << "ERROR: array1 not sorted :(";
+            if (!is_sorted(m_ALL(arr))) cerr << endl << "ERROR: array1 not sorted :(";
             // printArray(arr, myTempLow, myTempHigh);
 
             m_START_TIME_ONLY
-            fm_sort::fm_sort(m_ALL(baseArray));
+            ir_sort::integer_sort_small_obj(m_ALL(arr), [](auto &objectNum) { return objectNum; });
+            // fm_sort::fm_sort(m_ALL(baseArray));
+
 /*            ArrayDataType mid_element_arr[5] = {baseArray[0], baseArray[maxArrayLength >> 2], baseArray[maxArrayLength>>1], baseArray[maxArrayLength - (maxArrayLength>>2)], baseArray[maxArrayLength-1]};
             ir_sort::basic_sorts::insertion_sort_basic_asc<decltype(begin(baseArray)),ArrayDataType>(begin(baseArray), 0, 4);
             ArrayDataType mid_element = mid_element_arr[2];
@@ -305,7 +224,7 @@ int32_t main() {
             // kx::radix_sort(m_ALL(baseArray)); // GREAT from 90 to 3000 // this is NOT stable sorting
             m_END_TIME
             timeArr[timeArrIndex] = duration.count();
-            if (!isSorted(m_ALL(baseArray))) cerr << endl << "ERROR: array2 not sorted :(";
+            if (!is_sorted(m_ALL(baseArray))) cerr << endl << "ERROR: array2 not sorted :(";
             // printArray(arr, myTempLow, myTempHigh);
 
             if(settings_PRINT_TIME_COMPARISON){
@@ -316,7 +235,7 @@ int32_t main() {
             sort1Ratio += (timeArr[0] / timeArr[0]);
             sort2Ratio += (((1.0 * timeArr[1]) / timeArr[0]));
 
-            if (!compareArray(begin(arr)+myTempLow, begin(arr)+myTempHigh+1, begin(baseArray))) { db1(__) };
+            if (!compareArray(begin(arr)+myTempLow, begin(arr)+myTempHigh+1, begin(baseArray))) { db(__); };
 
             //#################################################
             bestThreshold[minIndex(timeArr, timeArrLength)]++;
@@ -325,7 +244,7 @@ int32_t main() {
         cout << endl;
         dblimit(bestThreshold,0,timeArrLength-1); // This will print the number of times ir_sort was fast and number of times std::sort was fast
         int64_t maxSpeedIndex = maxIndex(bestThreshold, timeArrLength);
-        db1(bestThreshold[maxSpeedIndex])         // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
+        db(bestThreshold[maxSpeedIndex]);         // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
 
         if (maxSpeedIndex == 0) cout << "\n\nsort1 is faster than sort2 ";
         else cout << "\n\nsort2 is faster than sort1";

@@ -1039,6 +1039,31 @@ namespace fm_sort {
     // TODO: integrate timsort with my functions
     // link: https://github.com/tvanslyke/timsort-cpp
 
+    /**
+     *  @brief  Main method which performs sorting based on index.
+     *  @param  first                   An iterator.
+     *  @param  last                    Another iterator.
+     *  @param  p_arr_index             Auxiliary array/vector with the correct index of the elements of the
+     *                                  range [first, last) after performing sorting based on index
+     *  @return  Nothing.
+     *
+     *  Time complexity O(n)
+     *
+     *  Auxiliary space complexity O(n)
+     *
+     *  Sorts the elements in the range @p [first,last) in ascending order,
+     *  such that std::less(*(i+1),*i) is false for every iterator @e i in the
+     *  range @p [first,last-1).
+     *
+     *
+     *  Example:
+     *
+     *  Array in range [first, last) = {Delta, Echo, Bravo, Charlie, Alpha}
+     *
+     *  Array p_arr_index = {4, 2, 3, 0, 1}
+     *
+     *  Order of range [first, last) after execution of the algorithm = {Alpha, Bravo, Charlie, Delta, Echo}
+     */
     template<typename RandomAccessIterator, typename RandomAccessIter2>
     void fm_sort_objects(RandomAccessIterator first, RandomAccessIterator last, RandomAccessIter2 p_arr_index) {
         using IntegerIndexType = typename std::iterator_traits<RandomAccessIter2>::value_type;

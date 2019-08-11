@@ -7,9 +7,9 @@
 #pragma ide diagnostic ignored "OCSimplifyInspection"
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 
-// #include <iostream>
+#include <iostream>
 // #include <cstdint>
 
 // #include <iomanip>
@@ -21,8 +21,12 @@
 
 // #include <type_traits>
 
+#include "common_functions.hpp"
+
 #include <boost/sort/sort.hpp>
 #include <boost/sort/spreadsort/float_sort.hpp>
+#include <tim/timsort.h>
+#include <iomanip>
 
 #include "../src/integer_sort.hpp"
 #include "../references/ska_sort.hpp"
@@ -32,16 +36,6 @@ using namespace std;
 using namespace std::chrono;
 
 //#################################################
-#define endl '\n'
-#define db1(x) cout << "\nDebug: " << setw(30) << left << #x << " = " << (x);
-#define db2(x, y) cout << "\nDebug: " << #x << " = " << (x) << ",   " << #y << " = " << (y);
-#define db3(x, y, z) cout << "\nDebug: " << #x << " = " << (x) << ",   " << #y << " = " << (y) << ",   " << #z << " = " << (z);
-#define dblimit(arr, l, h) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #arr << " [" << (l) << " : " << (h) << "] = "; for(int64_t i = (l); i <= (h); i++) cerr << (arr)[i] << ", "; cerr << endl;
-#define dbiter(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(auto i_temp1 = 0, len_temp1 = (len), iter_temp1 = first; i_temp1 < len_temp1; ++i_temp1) cerr<<iter_temp1[i_temp1]<<", "; cerr<<endl;
-#define dbsize(arr, size) cout << "\nDebug: " << #arr << " [" << 0 << " : " << ((size)-1) << "] = "; for(int64_t i = 0; i < (size); i++) cout << (arr)[i] << ", ";
-
-//#################################################
-#define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int32_t columnWidth = 15;
 
 class myClassInt;
@@ -94,7 +88,7 @@ using ArrayIndexType = int64_t;
  * global_onlyPositiveNumbers = 2;      // -ve numbers
  *
  * */
-#define settings_onlyPositiveNumbers 0
+#define settings_onlyPositiveNumbers 1
 
 /*
  * Number of bits to be used
@@ -163,9 +157,9 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
     while(it_first != last){
         if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
-            db3(index, *it_first, *it_second)
-            // dbiter("arr1[]", first, distance(first, last));
-            // dbiter("arr2[]", second, distance(first, last));
+            db(index, *it_first, *it_second);
+            // dbiter_n("arr1[]", first, distance(first, last));
+            // dbiter_n("arr2[]", second, distance(first, last));
             return false;
         }
         ++index;
@@ -181,14 +175,14 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
 template<typename T>
 int64_t maxIndex(const T &arr, const int64_t &size) {
     int64_t index = 0;
-    rangeup(i, 1, size) if (arr[i] > arr[index]) index = i;
+    urange(i, 1, size) if (arr[i] > arr[index]) index = i;
     return index;
 }
 
 template<typename T>
 int64_t minIndex(const T &arr, const int64_t &size) {
     int64_t index = 0;
-    rangeup(i, 1, size) if (arr[i] < arr[index]) index = i;
+    urange(i, 1, size) if (arr[i] < arr[index]) index = i;
     return index;
 }
 
@@ -280,10 +274,10 @@ int32_t main() {
     vector<ArrayDataType> arr(static_cast<unsigned long>(maxArrayLength));
     vector<ArrayDataType> baseArray(static_cast<unsigned long>(maxArrayLength));
 
-    rangeup(arrayLength, minArrayLength, maxArrayLength + 1) {
+    urange(arrayLength, minArrayLength, maxArrayLength + 1) {
         cout << "#####################################################################";
-        db1(arrayLength)
-        db1(testCases)
+        db(arrayLength);
+        db(testCases);
 
         irSortRatio = 0, stdSortRatio = 0;
 
@@ -297,7 +291,7 @@ int32_t main() {
                  << setw(setwLenRatio) << "ratio ir_sort" << "\t," << setw(setwLenRatio) << "ratio std::sort";
         }
 
-        rangeup(__, 0, testCases) {
+        urange(__, 0, testCases) {
             int64_t myTempLow = 0, myTempHigh = arrayLength - 1;
 
             // Fill up the array
@@ -314,7 +308,7 @@ int32_t main() {
             int64_t timeArrIndex = 0;
 
             startTime
-            boost::sort::spreadsort::integer_sort(arr.begin(), arr.end(), [](const myClassInt& a, const int& val){return a.classGetIndex() >> val;});
+            // boost::sort::spreadsort::integer_sort(arr.begin(), arr.end(), [](const myClassInt& a, const int& val){return a.classGetIndex() >> val;});
             // ska_sort(begin(arr), end(arr), [](myClassInt &a){return a.classGetIndex();});
             // boost::sort::spreadsort::integer_sort(begin(arr), end(arr), [](const ArrayDataType& a, const int& val){return a.classGetIndex() >> val;});
             // std::sort(begin(arr), end(arr), [](ArrayDataType &a , ArrayDataType &b){return a.classGetIndex() < b.classGetIndex();});
@@ -322,7 +316,7 @@ int32_t main() {
             // boost::sort::spinsort(begin(arr), end(arr), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
             // boost::sort::flat_stable_sort(begin(arr), end(arr), [](const ArrayDataType &a, const ArrayDataType &b){ return a.classGetIndex() < b.classGetIndex();});
 
-            // ir_sort::radixSort_asc<ArrayDataType>(arr, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
+            ir_sort::radixSort_Positive_asc_8<ArrayDataType>(arr, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
             // integer_sort_small_obj(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, f1_getIndex, true);
             // integer_sort_small_obj(&arr[0] + myTempLow, &arr[0] + myTempHigh + 1, [](ArrayDataType &a) { return a.classGetIndex(); }, true);   // BEST way to sort
             // radixSort_Positive_asc<ArrayDataType>(arr, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, [](ArrayDataType &a) { return a.classGetIndex(); });
@@ -333,19 +327,23 @@ int32_t main() {
             // objPrintArray(arr, myTempLow, myTempHigh);
 
             startTimeOnly
-            using IndexType = int_fast64_t;
+            // ir_sort::radixSort_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
+            ir_sort::radixSort_Positive_asc_16<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
+
+/*            using IndexType = int_fast64_t;
             auto arr_first = begin(baseArray);
             vector<IndexType > p_arr_index(static_cast<unsigned long>(maxArrayLength));
-            iota(begin(p_arr_index), end(p_arr_index), 0);
+            iota(begin(p_arr_index), end(p_arr_index), 0);*/
 
             // ska_sort(begin(p_arr_index), end(p_arr_index), [arr_first](IndexType &a){return arr_first[a].classGetIndex();}); // :( not able to optimise
             // boost::sort::spreadsort::integer_sort(begin(p_arr_index), end(p_arr_index), [arr_first](const IndexType a, const int val){return arr_first[a].classGetIndex() >> val;}); // :( not sorting
-            sort(begin(p_arr_index), end(p_arr_index), [arr_first](IndexType &a, IndexType &b){return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, good results
+            // sort(begin(p_arr_index), end(p_arr_index), [arr_first](IndexType &a, IndexType &b){return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, good results
             // boost::sort::pdqsort(begin(p_arr_index), end(p_arr_index), [arr_first](IndexType &a, IndexType &b){ return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, decent results
             // boost::sort::spinsort(begin(p_arr_index), end(p_arr_index), [arr_first](const IndexType &a, const IndexType &b){return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, excellent results
             // boost::sort::flat_stable_sort(begin(p_arr_index), end(p_arr_index), [arr_first](const IndexType &a, const IndexType &b){ return arr_first[a].classGetIndex() < arr_first[b].classGetIndex();}); // GOOD, for all ranges, excellent results
+/*            tim::timsort(p_arr_index.begin(), p_arr_index.end(), [arr_first](const IndexType &a, const IndexType &b) { return arr_first[a].classGetIndex() < arr_first[b].classGetIndex(); });
 
-            fm_sort::fm_sort_objects(begin(baseArray), end(baseArray), begin(p_arr_index));
+            fm_sort::fm_sort_objects(begin(baseArray), end(baseArray), begin(p_arr_index));*/
 
             // ir_sort::radixSort_Positive_asc<ArrayDataType>(baseArray, myTempLow, myTempHigh, myTempHigh - myTempLow + 1, f1_getIndex);
             // ska_sort(begin(baseArray), end(baseArray), [](myClassInt &a){return a.classGetIndex();});
@@ -372,16 +370,16 @@ int32_t main() {
             irSortRatio += (timeArr[0] / timeArr[0]);
             stdSortRatio += (((1.0 * timeArr[1]) / timeArr[0]));
 
-            if (!compareArray(begin(arr)+myTempLow, begin(arr)+myTempHigh+1, begin(baseArray))) { db1(__) };
+            if (!compareArray(begin(arr)+myTempLow, begin(arr)+myTempHigh+1, begin(baseArray))) { db(__); };
 
             //#################################################
             bestThreshold[minIndex(timeArr, timeArrLength)]++;
         }
 
         cout << endl;
-        dbsize(bestThreshold, timeArrLength);    // This will print the number of times ir_sort was fast and number of times std::sort was fast
+        dblimit(bestThreshold, 0, timeArrLength-1); // This will print the number of times ir_sort was fast and number of times std::sort was fast
         int64_t maxSpeedIndex = maxIndex(bestThreshold, timeArrLength);
-        db1(bestThreshold[maxSpeedIndex])           // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
+        db(bestThreshold[maxSpeedIndex]);           // Number of times ir_sort was faster than std::sort out of total testCases or vice-versa
 
         if (maxSpeedIndex == 0) cout << "\n\nir_sort is faster than std::sort ";
         else cout << "\n\nstd::sort is faster than ir_sort ";
