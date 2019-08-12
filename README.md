@@ -10,14 +10,21 @@ Graph
 Stats
 ----------------------------------
 * Results for ```Array length = 781250```, ```Object size = 4 K bytes = vector<uint64_t>[512]```, ```Array size = 2.98 GB```:
-    - 6.32 times faster than C++ STL std::sort
-    - 5.55 times faster than std::stable_sort
-    - 3.80 times faster than pdqsort
-    - 3.15 times faster than spinsort
-    - 2.82 times faster than timsort
-    - 2.55 times faster than flat_stable_sort
-    - 2.22 times faster than spreadsort
-    - 1.53 times faster than skasort
+    - Heavy comparison: The comparison is the sum of all the numbers of the array
+    - Light comparison: The comparison is with the first element of the array, as a key
+
+|  Sorting technique   | Heavy Comparison time | Light Comparison time |
+|:--------------------:|:---------------------:|:---------------------:|
+| fm_sort optimization |     x                 |      y                |
+| C++ STL std::sort    | 6.32x                 |  2.98y                |
+| std::stable_sort     | 5.54x                 | 15.03y                |
+| pdqsort              | 3.80x                 |  1.99y                |
+| spinsort             | 3.15x                 |  5.95y                |
+| timsort              | 2.83x                 |  6.72y                |
+| flat_stable_sort     | 2.55x                 |  5.03y                |
+| spreadsort           | 2.23x                 |  1.73y                |
+| skasort              | 1.53x                 |  2.77y                |
+
 
 * Test conditions:
     1. Compiled using "g++ -std=c++17 -O2 -m64 -march=native" for testing
