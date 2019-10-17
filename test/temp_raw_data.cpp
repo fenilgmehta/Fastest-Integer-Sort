@@ -36,10 +36,10 @@ using namespace std::chrono;
 #define db2(x, y) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #x << " = " << (x) << ",   " << #y << " = " << (y) << endl;
 #define db3(x, y, z) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #x << " = " << (x) << ",   " << #y << " = " << (y) << ",   " << #z << " = " << (z) << endl;
 #define dblimit(arr, l, h) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << #arr << " [" << (l) << " : " << (h) << "] = "; for(int64_t i = (l); i <= (h); i++) cerr << (arr)[i] << ", "; cerr << endl;
-#define dbiter(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(auto i_temp1 = 0, len_temp1 = (len), iter_temp1 = first; i_temp1 < len_temp1; ++i_temp1) cerr<<iter_temp1[i_temp1]<<", "; cerr<<endl;
+#define dbiter_n(name, first, len) cerr << "\033[1;31m" << "Debug: " << "\033[0m" << name << " = "; for(auto i_temp1 = 0, len_temp1 = (len), iter_temp1 = first; i_temp1 < len_temp1; ++i_temp1) cerr<<iter_temp1[i_temp1]<<", "; cerr<<endl;
 
 //#################################################
-#define rangeup(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
+#define urange(_i, _startLimit, _endLimit) for(int64_t (_i) = (_startLimit); (_i) < (_endLimit); (_i)++)
 const int32_t columnWidth = 15;
 
 using ArrayIndexType = int64_t;
@@ -142,8 +142,8 @@ bool compareArray(RandomAccessIterator first, RandomAccessIterator last, RandomA
         if((*it_first)!=(*it_second)){
             cout << "\n\nERROR: arrays not equal";
             db3(index, *it_first, *it_second)
-            dbiter("arr1[]", first, distance(first, last))
-            dbiter("arr2[]", second, distance(first, last))
+            dbiter_n("arr1[]", first, distance(first, last))
+            dbiter_n("arr2[]", second, distance(first, last))
             return false;
         }
         ++index;
@@ -215,7 +215,7 @@ int32_t main() {
         cout<<"ir_sort,std::sort,ska_sort,boost::sort::spreadsort::integer_sort,boost::sort::pdqsort,boost::sort::spinsort,boost::sort::flat_stable_sort"<<endl;
     }
 
-    rangeup(__, 0, testCases) {
+    urange(__, 0, testCases) {
         int64_t myTempLow = 0, myTempHigh = arrayLength - 1;
 
         // Fill up the array
